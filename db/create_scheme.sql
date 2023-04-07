@@ -1,7 +1,7 @@
 create schema mind_palace;
 create schema mind_palace_api;
 
-ALTER ROLE mp_admin SET SEARCH_PATH to mind_palace, mind_palace_api;
+ALTER ROLE CURRENT_ROLE SET SEARCH_PATH to mind_palace, mind_palace_api;
 
 CREATE TABLE if not exists mind_palace.users (
     id serial PRIMARY KEY,
