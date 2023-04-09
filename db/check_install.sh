@@ -18,10 +18,10 @@ cd "$SCRIPT_DIR"
 
 # Creating DB
 export PGPASSWORD="$POSTGRES_PASSWORD"
-psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname \
-    "postgres" -c "CREATE DATABASE $DB_NAME;
-    create user $DB_ADMIN with encrypted password '$DB_ADMIN_DB_ADMIN_PASSWORD';
-    grant all privileges on database $DB_NAME to $DB_ADMIN;"
+psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname "postgres" -c "CREATE DATABASE $DB_NAME;"
+psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname "postgres" -c "create user $DB_ADMIN with encrypted password '$DB_ADMIN_DB_ADMIN_PASSWORD';"
+psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname "postgres" -c "grant all privileges on database $DB_NAME to $DB_ADMIN;"
+echo "---> DB $DB_NAME was created"
 
 # Installation DB scheme from create_scheme.sql
 PGPASSWORD="$DB_ADMIN_PASSWORD"
