@@ -26,9 +26,3 @@ psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname \
 # Installation DB scheme from create_scheme.sql
 PGPASSWORD="$DB_ADMIN_PASSWORD"
 psql -h "$HOST" -p "$PORT" --user "$DB_ADMIN" --dbname "$DB_NAME" < create_scheme.sql
-
-# Installation DB api functions from /db_api directory
-cd "db_api/"
-for FILE in *; do
-  psql -h "$HOST" -p "$PORT" --user "$DB_ADMIN" --dbname "$DB_NAME" < "$FILE"
-done
