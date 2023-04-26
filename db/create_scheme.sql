@@ -1,5 +1,5 @@
-create schema mind_palace;
-create schema mind_palace_api;
+create schema if not exists mind_palace;
+create schema if not exists mind_palace_api;
 
 ALTER ROLE CURRENT_ROLE SET SEARCH_PATH to mind_palace, mind_palace_api;
 
