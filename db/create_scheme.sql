@@ -20,27 +20,21 @@ CREATE TABLE if not exists mind_palace.themes (
     FOREIGN KEY (main_theme_id) REFERENCES mind_palace.themes (id)
 );
 
-CREATE TABLE if not exists mind_palace.questions (
+CREATE TABLE if not exists mind_palace.note_types (
     id serial PRIMARY KEY,
-    title VARCHAR,
-    theme_id int,
-    correct_answered_time int,
-
-    user_id int,
-
-    FOREIGN KEY (theme_id) REFERENCES mind_palace.themes (id),
-    FOREIGN KEY (user_id) REFERENCES mind_palace.users (id)
+    title VARCHAR
 );
 
-CREATE TABLE if not exists mind_palace.ideas (
+CREATE TABLE if not exists mind_palace.notes (
     id serial PRIMARY KEY,
     title VARCHAR,
     text VARCHAR,
 
-    is_answer boolean,
-    question_id int,
+    note_type int,
+    theme_id int,
     user_id int,
 
-    FOREIGN KEY (question_id) REFERENCES mind_palace.themes (id),
+    FOREIGN KEY (theme_id) REFERENCES mind_palace.themes (id),
+    FOREIGN KEY (note_type) REFERENCES mind_palace.note_types (id),
     FOREIGN KEY (user_id) REFERENCES mind_palace.users (id)
 );
