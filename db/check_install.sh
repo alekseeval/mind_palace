@@ -16,6 +16,11 @@ DB_NAME="mind_palace"
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "$SCRIPT_DIR"
 
+# Set log file of script
+mkdir -p "log"
+SCRIPT_LOG="$(pwd)/log/log_$(date -Iseconds).log"
+exec &>"$SCRIPT_LOG"
+
 # Creating DB
 echo "---> Start DB creation..."
 export PGPASSWORD="$POSTGRES_PASSWORD"
@@ -43,3 +48,6 @@ for FILE in *; do
   psql -h "$HOST" -p "$PORT" --user "$DB_ADMIN" --dbname "$DB_NAME" < "$FILE"
 done
 echo "---> DB API was successfully installed"
+
+exec &>/dev/tty
+cat "$SCRIPT_LOG"
