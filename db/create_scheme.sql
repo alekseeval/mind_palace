@@ -6,7 +6,7 @@ ALTER ROLE CURRENT_ROLE SET SEARCH_PATH to mind_palace, mind_palace_api;
 CREATE TABLE if not exists mind_palace.users (
     id serial PRIMARY KEY,
     name VARCHAR,
-    tg_id VARCHAR,
+    tg_id bigint,
 
     UNIQUE(tg_id)
 );
