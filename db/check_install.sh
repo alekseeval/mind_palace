@@ -18,7 +18,7 @@ cd "$SCRIPT_DIR"
 
 # Set log file of script
 mkdir -p "log"
-SCRIPT_LOG="log/log_$(date -Iseconds).log"
+SCRIPT_LOG="$(pwd)/log/log_$(date -Iseconds).log"
 exec &>"$SCRIPT_LOG"
 
 # Creating DB and admin user
