@@ -24,11 +24,12 @@ exec &>"$SCRIPT_LOG"
 # Creating DB and admin user
 echo "---> Start DB creation..."
 export PGPASSWORD="$POSTGRES_PASSWORD"
+
 echo "
       CREATE DATABASE $DB_NAME;
       create user $DB_ADMIN with encrypted password '$DB_ADMIN_DB_ADMIN_PASSWORD';
       grant all privileges on database $DB_NAME to $DB_ADMIN;
-      " | psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname "postgres"
+      " | psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname "postgres" &> /dev/null
 echo -e "---> DB $DB_NAME was successfully created\n"
 
 # Installation DB scheme from create_scheme.sql
