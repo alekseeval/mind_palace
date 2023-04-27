@@ -21,7 +21,7 @@ mkdir -p "log"
 SCRIPT_LOG="log/log_$(date -Iseconds).log"
 exec &>"$SCRIPT_LOG"
 
-# Creating DB
+# Creating DB and admin user
 echo "---> Start DB creation..."
 export PGPASSWORD="$POSTGRES_PASSWORD"
 psql -h "$HOST" -p "$PORT" --user "$POSTGRES" --dbname "postgres" -c "CREATE DATABASE $DB_NAME;"
