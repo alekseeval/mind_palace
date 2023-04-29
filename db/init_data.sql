@@ -1,4 +1,4 @@
-INSERT INTO mind_palace.note_types(id, title) VALUES (1, 'note'),
+INSERT INTO mind_palace.note_types(id, title) VALUES (1, 'simpleNote'),
                                                      (2, 'question'),
                                                      (3, 'task')
 ON CONFLICT (id) DO UPDATE
