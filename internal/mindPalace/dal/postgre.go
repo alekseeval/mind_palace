@@ -1,17 +1,17 @@
 package dal
 
 import (
-	"database/sql"
+	"github.com/jmoiron/sqlx"
 )
 
 // TODO: daoInterface realization
 
-type PostgreDB struct {
-	dbConn sql.DB
+type PostgresDB struct {
+	db *sqlx.DB
 }
 
-func NewPostgreDB(dbHost string, dbPort int, login string, password string) (*PostgreDB, error) {
-	return &PostgreDB{
-		dbConn: sql.DB{},
+func NewPostgresDB(db *sqlx.DB) (*PostgresDB, error) {
+	return &PostgresDB{
+		db: db,
 	}, nil
 }
