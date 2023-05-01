@@ -1,4 +1,4 @@
-package mindPalace
+package model
 
 type DAO interface {
 	UserDAO

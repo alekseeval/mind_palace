@@ -1,9 +1,9 @@
-package mindPalace
+package model
 
 type NoteType int
 
 const (
-	SimpleNote NoteType = iota+1
+	SimpleNote NoteType = iota + 1
 	Question
 	Task
 )
