@@ -1,6 +1,7 @@
 package dal
 
 import (
+	"MindPalace/internal/mindPalace/configuration"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
 )
@@ -11,8 +12,8 @@ type PostgresDB struct {
 	db *sqlx.DB
 }
 
-func NewPostgresDB(db *sqlx.DB) (*PostgresDB, error) {
+func NewPostgresDB(config *configuration.Config) (*PostgresDB, error) {
 	return &PostgresDB{
-		db: db,
+		db: &sqlx.DB{},
 	}, nil
 }
