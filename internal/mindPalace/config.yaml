@@ -7,5 +7,7 @@ system:
   db:
     host: '192.168.0.108'
     port: 5432
-    name: 'mind_palace'
+    user: "mp_admin"
+    password: "mp_admin"
+    db_name: 'mind_palace'
     max_conn: 100
