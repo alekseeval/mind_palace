@@ -2,6 +2,7 @@ package configuration
 
 import (
 	"github.com/spf13/viper"
+	"strings"
 )
 
 type Config struct {
@@ -25,6 +26,8 @@ type Config struct {
 func ReadConfig(path string) (config *Config, err error) {
 	viper.SetConfigFile(path)
 	viper.AutomaticEnv()
+	viper.SetEnvPrefix("mp")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	err = viper.ReadInConfig()
 	if err != nil {
