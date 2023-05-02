@@ -2,6 +2,7 @@ package dal
 
 import (
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 )
 
 // TODO: daoInterface realization
