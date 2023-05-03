@@ -10,15 +10,15 @@ const (
 
 type User struct {
 	Id         int
-	Name       string
-	TelegramId int64
+	Name       *string
+	TelegramId *int64
 }
 
 type Theme struct {
 	Id          int
 	Title       string
-	MainThemeId int
-	UserId      int
+	MainThemeId *int
+	UserId      *int
 }
 
 type Note struct {
