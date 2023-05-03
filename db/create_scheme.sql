@@ -24,18 +24,18 @@ CREATE TABLE if not exists mind_palace.themes (
 
 CREATE TABLE if not exists mind_palace.note_types (
     id serial PRIMARY KEY,
-    title VARCHAR,
+    title VARCHAR NOT NULL ,
 
     UNIQUE(title)
 );
 
 CREATE TABLE if not exists mind_palace.notes (
     id serial PRIMARY KEY,
-    title VARCHAR,
-    text VARCHAR,
-    note_type int,
-    theme_id int,
-    user_id int,
+    title VARCHAR NOT NULL,
+    text VARCHAR NOT NULL,
+    note_type int NOT NULL,
+    theme_id int NOT NULL,
+    user_id int NOT NULL,
 
     UNIQUE(title, user_id),
     FOREIGN KEY (theme_id) REFERENCES mind_palace.themes (id),
