@@ -9,9 +9,9 @@ const (
 )
 
 type User struct {
-	Id         int
-	Name       *string
-	TelegramId *int64
+	Id         int     `db:"id"`
+	Name       *string `db:"name"`
+	TelegramId *int64  `db:"tg_id"`
 }
 
 type Theme struct {

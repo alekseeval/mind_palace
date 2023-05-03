@@ -1,12 +1,12 @@
 CREATE OR REPLACE FUNCTION mind_palace_api.delete_user (p_user_id int)
-RETURNS mind_palace.users
+RETURNS int
 LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    r_user mind_palace.users;
+    r_id int;
 BEGIN
-    DELETE FROM mind_palace.users WHERE id=p_user_id RETURNING * INTO r_user;
-    RETURN r_user;
+    DELETE FROM mind_palace.users WHERE id=p_user_id RETURNING id INTO r_id;
+    RETURN r_id;
 END;
 $$;
