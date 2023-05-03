@@ -14,6 +14,6 @@ func (p *PostgresDB) ChangeTheme(theme *model.Theme) (*model.Theme, error) {
 	return nil, nil
 }
 
-func (p *PostgresDB) DeleteTheme(id int) (*model.Theme, error) {
-	return nil, nil
+func (p *PostgresDB) DeleteTheme(id int) (int, error) {
+	return 0, nil
 }

@@ -14,6 +14,6 @@ func (p *PostgresDB) ChangeNote(note *model.Note) (*model.Note, error) {
 	return nil, nil
 }
 
-func (p *PostgresDB) DeleteNote(id int) (*model.Note, error) {
-	return nil, nil
+func (p *PostgresDB) DeleteNote(id int) (int, error) {
+	return 0, nil
 }
