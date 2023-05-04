@@ -6,17 +6,6 @@ $$
 DECLARE
     cur_user mind_palace.users;
 BEGIN
-    SELECT * INTO cur_user
-    FROM mind_palace.users
-    WHERE id = p_id;
-
-    if p_name is null then
-        p_name = cur_user.name;
-    end if;
-    if p_tg_id is null then
-        p_tg_id = cur_user.tg_id;
-    end if;
-
     UPDATE mind_palace.users
     SET name=p_name, tg_id=p_tg_id
     WHERE id=p_id
