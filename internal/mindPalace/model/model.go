@@ -15,17 +15,17 @@ type User struct {
 }
 
 type Theme struct {
-	Id          int
-	Title       string
-	MainThemeId *int
-	UserId      *int
+	Id          int    `db:"id"`
+	Title       string `db:"title"`
+	MainThemeId *int   `db:"main_theme_id"`
+	UserId      *int   `db:"user_id"`
 }
 
 type Note struct {
-	Id         int
-	Title      string
-	Text       string
-	NoteTypeId NoteType
-	ThemeId    int
-	UserId     int
+	Id         int      `db:"id"`
+	Title      string   `db:"title"`
+	Text       string   `db:"text"`
+	NoteTypeId NoteType `db:"note_type"`
+	ThemeId    int      `db:"theme_id"`
+	UserId     int      `db:"user_id"`
 }

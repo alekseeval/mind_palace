@@ -5,7 +5,6 @@ import (
 	"MindPalace/internal/mindPalace/dal"
 	"MindPalace/internal/mindPalace/model"
 	"fmt"
-	"github.com/jmoiron/sqlx"
 	"log"
 )
 
@@ -22,12 +21,17 @@ func main() {
 		log.Fatal("Failed to create connection to DB\t", err)
 	}
 
-	var userTgId int64 = 123123
+	testUsers(dbDAO)
+	testThemes(dbDAO)
+}
+
+func testUsers(dbDAO model.DAO) {
+	var userTgId int64 = 666
 	var user *model.User
 
 	// --------------------------------------------------------
 	var userName *string = nil
-	user, err = dbDAO.SaveUser(model.User{
+	user, err := dbDAO.SaveUser(model.User{
 		Name:       userName,
 		TelegramId: &userTgId,
 	})
@@ -44,7 +48,7 @@ func main() {
 	fmt.Println(user)
 
 	// --------------------------------------------------------
-	newUserName := "Alekseev Andrey"
+	newUserName := "Test user"
 	user.Name = &newUserName
 	user, err = dbDAO.ChangeUser(user)
 	if err != nil {
@@ -60,6 +64,33 @@ func main() {
 	fmt.Println("User was deleted ", id)
 }
 
-func initPostgresDb() (*sqlx.DB, error) {
-	return nil, nil
+func testThemes(dbDAO model.DAO) {
+	userId := 13
+	theme := &model.Theme{
+		Title:       "Test theme 666",
+		MainThemeId: nil,
+		UserId:      &userId,
+	}
+	// --------------------------------------------------------
+	theme, err := dbDAO.CreateTheme(*theme)
+	if err != nil {
+		log.Fatal("Failed to create theme\t", err)
+	}
+	log.Println(theme)
+
+	// --------------------------------------------------------
+	var themes []*model.Theme
+	themes, err = dbDAO.GetAllUserThemes(userId)
+	log.Println(themes)
+
+	// --------------------------------------------------------
+	theme.Title = "Test theme 3"
+	newMainThemeId := 4
+	theme.MainThemeId = &newMainThemeId
+	theme, err = dbDAO.ChangeTheme(theme)
+	log.Println("Theme successfully changed ", theme)
+
+	// --------------------------------------------------------
+	themeId, err := dbDAO.DeleteTheme(theme.Id)
+	log.Println("Successfully deleted theme ", themeId)
 }
