@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION mind_palace_api.get_notes (p_user_id int, p_theme_id int = null)
+CREATE OR REPLACE FUNCTION mind_palace_api.get_all_notes_for_user_by_theme (p_user_id int, p_theme_id int = null)
 RETURNS SETOF mind_palace.notes
 LANGUAGE plpgsql
 AS
