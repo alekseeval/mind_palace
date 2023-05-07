@@ -5,21 +5,30 @@ import (
 	"MindPalace/internal/mindPalace/dal"
 	"MindPalace/internal/mindPalace/model"
 	"MindPalace/internal/mindPalace/mpapp"
-	"log"
+	"fmt"
+	log "github.com/sirupsen/logrus"
 )
 
 var PATH_TO_CONFIG string = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
 
 func main() {
+	log.SetFormatter(&log.JSONFormatter{})
+
 	config, err := configuration.ReadConfig(PATH_TO_CONFIG)
 	if err != nil {
-		log.Fatal("Error occurred when read config file\t", err)
+		log.WithField("reason", err).Fatal("Error occurred when read config file")
 	}
+	lvl, err := log.ParseLevel(config.Logger.Level)
+	fmt.Println(lvl)
+	if err != nil {
+		log.WithField("reason", err).Fatal("Failed to parse log level")
+	}
+	log.SetLevel(lvl)
 
 	var dbDAO model.IDAO
 	dbDAO, err = dal.NewPostgresDB(config)
 	if err != nil {
-		log.Fatal("Failed to create connection to DB\t", err)
+		log.WithField("reason", err).Fatal("Failed to create connection to DB")
 	}
 
 	httpSerer := mpapp.NewHttpServer(config, &dbDAO)

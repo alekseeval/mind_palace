@@ -10,10 +10,10 @@ type Config struct {
 		Http struct {
 			Host string `mapstructure:"host"`
 			Port int    `mapstructure:"port"`
-		}
+		} `mapstructure:"http"`
 		Grpc struct {
 			Port int `mapstructure:"port"`
-		}
+		} `mapstructure:"grpc"`
 		DB struct {
 			Host     string `mapstructure:"host"`
 			Port     int    `mapstructure:"port"`
@@ -21,7 +21,10 @@ type Config struct {
 			User     string `mapstructure:"user"`
 			Password string `mapstructure:"password"`
 			MaxConn  int    `mapstructure:"max_conn"`
-		}
+		} `mapstructure:"db"`
+	} `mapstructure:"system"`
+	Logger struct {
+		Level string `mapstructure:"level"`
 	}
 }
 

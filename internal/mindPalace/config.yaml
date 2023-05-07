@@ -11,3 +11,5 @@ system:
     password: "mp_admin"
     db_name: 'mind_palace'
     max_conn: 100
+logger:
+  level: trace
