@@ -10,7 +10,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-// PostgresDB is struct which implements model.DAO interface and provides access to PostgresSQL DB
+// PostgresDB is struct which implements model.IDAO interface and provides access to PostgresSQL DB
 type PostgresDB struct {
 	db *sqlx.DB
 }
@@ -28,7 +28,7 @@ func NewPostgresDB(config *configuration.Config) (*PostgresDB, error) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-//  NOTE DAO IMPLEMENTATION
+//  NOTE IDAO IMPLEMENTATION
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) CreateNote(note model.Note) (*model.Note, error) {
@@ -75,7 +75,7 @@ func (p *PostgresDB) DeleteNote(noteId int) (int, error) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-//  THEME DAO IMPLEMENTATION
+//  THEME IDAO IMPLEMENTATION
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) CreateTheme(theme model.Theme) (*model.Theme, error) {
@@ -122,7 +122,7 @@ func (p *PostgresDB) DeleteTheme(themeId int) (int, error) {
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
-//  USER DAO IMPLEMENTATION
+//  USER IDAO IMPLEMENTATION
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) SaveUser(user model.User) (*model.User, error) {
