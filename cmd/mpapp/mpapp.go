@@ -23,7 +23,6 @@ func main() {
 	if err != nil {
 		log.WithField("reason", err).Fatal("Failed to parse log level")
 	}
-	log.SetLevel(lvl)
 
 	// Setup services
 	var dbDAO model.IDAO
@@ -31,6 +30,7 @@ func main() {
 	if err != nil {
 		log.WithField("reason", err).Fatal("Failed to create connection to DB")
 	}
+	log.Info("Successfully connected to DB")
 
 	httpSerer := mpapp.NewHttpServer(config, &dbDAO)
 	httpSerer.ListenAndServe()
