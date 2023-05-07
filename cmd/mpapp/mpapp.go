@@ -23,6 +23,7 @@ func main() {
 
 	testUsers(dbDAO)
 	testThemes(dbDAO)
+	testNotes(dbDAO)
 }
 
 func testUsers(dbDAO model.DAO) {
@@ -93,4 +94,39 @@ func testThemes(dbDAO model.DAO) {
 	// --------------------------------------------------------
 	themeId, err := dbDAO.DeleteTheme(theme.Id)
 	log.Println("Successfully deleted theme ", themeId)
+}
+
+func testNotes(dbDAO model.DAO) {
+	userId := 13
+	themeId := 1
+	newNote := &model.Note{
+		Title: "Test Note 2",
+		Text: "Test Note 2 text text text text text text text text" +
+			"\ntexttexttexttext" +
+			"\ntexttexttext",
+		NoteTypeId: model.SimpleNote,
+		ThemeId:    themeId,
+		UserId:     userId,
+	}
+	// --------------------------------------------------------
+	newNote, err := dbDAO.CreateNote(*newNote)
+	if err != nil {
+		log.Fatal("Failed to create note\t", err)
+	}
+	log.Println(newNote)
+
+	// --------------------------------------------------------
+	var allNotes []*model.Note
+	allNotes, err = dbDAO.GetAllUserNotesByTheme(userId, themeId)
+	log.Println("All notes:\t", allNotes)
+
+	// --------------------------------------------------------
+	newNote.Text = "Test note 2 text text text"
+	newNote.NoteTypeId = model.Question
+	newNote, err = dbDAO.ChangeNote(newNote)
+	log.Println("Theme successfully changed\t", newNote)
+
+	// --------------------------------------------------------
+	themeId, err = dbDAO.DeleteNote(newNote.Id)
+	log.Println("Successfully deleted note ", themeId)
 }
