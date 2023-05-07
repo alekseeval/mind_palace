@@ -9,12 +9,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var PATH_TO_CONFIG string = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
+var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
 
 func main() {
+	// read config file and setup logger
 	log.SetFormatter(&log.JSONFormatter{})
-
-	config, err := configuration.ReadConfig(PATH_TO_CONFIG)
+	config, err := configuration.ReadConfig(PathToConfig)
 	if err != nil {
 		log.WithField("reason", err).Fatal("Error occurred when read config file")
 	}
@@ -25,6 +25,7 @@ func main() {
 	}
 	log.SetLevel(lvl)
 
+	// Setup services
 	var dbDAO model.IDAO
 	dbDAO, err = dal.NewPostgresDB(config)
 	if err != nil {
