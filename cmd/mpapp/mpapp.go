@@ -7,6 +7,9 @@ import (
 	"MindPalace/internal/mindPalace/mpapp"
 	"fmt"
 	log "github.com/sirupsen/logrus"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
@@ -32,8 +35,12 @@ func main() {
 	}
 	log.Info("Successfully connected to DB")
 
+	exitChl := make(chan os.Signal, 1)
+	signal.Notify(exitChl, syscall.SIGINT, syscall.SIGTERM)
+
 	httpSerer := mpapp.NewHttpServer(config, &dbDAO)
 	httpSerer.ListenAndServe()
+	<-exitChl
 	httpSerer.ShoutDown()
 
 }
