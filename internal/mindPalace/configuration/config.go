@@ -21,6 +21,7 @@ type Config struct {
 			User     string `mapstructure:"user"`
 			Password string `mapstructure:"password"`
 			MaxConn  int    `mapstructure:"max_conn"`
+			Timeout  int    `mapstructure:"timeout"`
 		} `mapstructure:"db"`
 	} `mapstructure:"system"`
 	Logger struct {

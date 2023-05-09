@@ -19,8 +19,8 @@ type PostgresDB struct {
 // error can be occurred by initial ping to db
 func NewPostgresDB(config *configuration.Config) (*PostgresDB, error) {
 	dbConfig := config.System.DB
-	connStr := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s",
-		dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.DBName)
+	connStr := fmt.Sprintf("user=%s password=%s host=%s port=%d dbname=%s connect_timeout=%d",
+		dbConfig.User, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.DBName, dbConfig.Timeout)
 	db, err := sqlx.Connect("postgres", connStr)
 	return &PostgresDB{
 		db: db,

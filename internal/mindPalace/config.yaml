@@ -11,5 +11,6 @@ system:
     password: "mp_admin"
     db_name: 'mind_palace'
     max_conn: 100
+    timeout: 5
 logger:
   level: trace
