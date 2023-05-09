@@ -47,7 +47,7 @@ func main() {
 	// setup services
 	ctx, ctxDone := context.WithCancel(context.Background())
 	eg, egContext := errgroup.WithContext(ctx)
-	httpSerer := mpapp.NewHttpServer(config, &dbDAO)
+	httpSerer := mpapp.NewHttpServer(config, dbDAO)
 
 	eg.Go(func() error {
 		err = httpSerer.ListenAndServe()

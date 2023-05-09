@@ -3,6 +3,7 @@ package mpapp
 import (
 	"MindPalace/internal/mindPalace/configuration"
 	"MindPalace/internal/mindPalace/model"
+	"fmt"
 	"github.com/labstack/echo/v4"
 	"golang.org/x/net/context"
 	"net/http"
@@ -10,32 +11,34 @@ import (
 )
 
 type HttpServer struct {
-	storage *model.IDAO
+	storage model.IDAO
 	echo    *echo.Echo
 
 	httpConfig *configuration.HttpConfig
 }
 
-func NewHttpServer(config *configuration.Config, storage *model.IDAO) *HttpServer {
-	return &HttpServer{
+func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer {
+	httpServer := &HttpServer{
 		storage:    storage,
 		httpConfig: &config.System.Http,
 	}
-}
 
-func (s *HttpServer) ListenAndServe() error {
 	// setup echo
 	e := echo.New()
 	e.HideBanner = true
-	e.Server.ReadTimeout = time.Duration(s.httpConfig.ReadTimeout)
-	e.Server.WriteTimeout = time.Duration(s.httpConfig.WriteTimeout)
-	s.echo = e
+	e.Server.ReadTimeout = time.Duration(httpServer.httpConfig.ReadTimeout) * time.Second
+	e.Server.WriteTimeout = time.Duration(httpServer.httpConfig.WriteTimeout) * time.Second
+	httpServer.echo = e
 
 	// endpoints
-	e.GET("/authorize", s.authorize)
-	e.GET("/register", s.register)
+	e.POST("/authorize", httpServer.authorize)
+	e.POST("/register", httpServer.register)
 
-	err := e.Start(":1234")
+	return httpServer
+}
+
+func (s *HttpServer) ListenAndServe() error {
+	err := s.echo.Start(fmt.Sprintf("%s:%d", s.httpConfig.Host, s.httpConfig.Port))
 	if err != nil && err != http.ErrServerClosed {
 		return err
 	}
