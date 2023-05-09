@@ -15,6 +15,7 @@ import (
 	"syscall"
 )
 
+// TODO: изменить путь на /etc/..
 var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
 
 func main() {

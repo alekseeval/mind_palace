@@ -20,6 +20,7 @@ func (s *HttpServer) authorize(c echo.Context) error {
 	return c.JSON(http.StatusOK, user)
 }
 
+// TODO: переписать
 // e.POST("/register")
 func (s *HttpServer) register(c echo.Context) error {
 
