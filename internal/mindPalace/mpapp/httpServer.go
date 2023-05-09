@@ -17,10 +17,11 @@ func NewHttpServer(config *configuration.Config, storage *model.IDAO) *HttpServe
 }
 
 func (s *HttpServer) ListenAndServe() error {
-	log.Info("Http server was successfully started")
+	log.Info("http server was successfully started")
 	return nil
 }
 
 func (s *HttpServer) ShoutDown() error {
+	log.Info("http server was successfully shutdown")
 	return nil
 }
