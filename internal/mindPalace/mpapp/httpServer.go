@@ -6,24 +6,35 @@ import (
 	"github.com/labstack/echo/v4"
 	"golang.org/x/net/context"
 	"net/http"
+	"time"
 )
 
 type HttpServer struct {
 	storage *model.IDAO
 	echo    *echo.Echo
+
+	httpConfig *configuration.HttpConfig
 }
 
 func NewHttpServer(config *configuration.Config, storage *model.IDAO) *HttpServer {
 	return &HttpServer{
-		storage: storage,
+		storage:    storage,
+		httpConfig: &config.System.Http,
 	}
 }
 
 func (s *HttpServer) ListenAndServe() error {
+	// setup echo
 	e := echo.New()
-	s.echo = e
 	e.HideBanner = true
+	e.Server.ReadTimeout = time.Duration(s.httpConfig.ReadTimeout)
+	e.Server.WriteTimeout = time.Duration(s.httpConfig.WriteTimeout)
+	s.echo = e
+
+	// endpoints
 	e.GET("/authorize", s.authorize)
+	e.GET("/register", s.register)
+
 	err := e.Start(":1234")
 	if err != nil && err != http.ErrServerClosed {
 		return err

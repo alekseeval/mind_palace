@@ -7,12 +7,7 @@ import (
 
 type Config struct {
 	System struct {
-		Http struct {
-			Host         string `mapstructure:"host"`
-			Port         int    `mapstructure:"port"`
-			ReadTimeout  int    `mapstructure:"read_timeout"`
-			WriteTimeout int    `mapstructure:"write_timeout"`
-		} `mapstructure:"http"`
+		Http HttpConfig `mapstructure:"http"`
 		Grpc struct {
 			Port int `mapstructure:"port"`
 		} `mapstructure:"grpc"`
@@ -29,6 +24,13 @@ type Config struct {
 	Logger struct {
 		Level string `mapstructure:"level"`
 	}
+}
+
+type HttpConfig struct {
+	Host         string `mapstructure:"host"`
+	Port         int    `mapstructure:"port"`
+	ReadTimeout  int    `mapstructure:"read_timeout"`
+	WriteTimeout int    `mapstructure:"write_timeout"`
 }
 
 func ReadConfig(path string) (config *Config, err error) {
