@@ -5,9 +5,9 @@ import (
 	"MindPalace/internal/mindPalace/dal"
 	"MindPalace/internal/mindPalace/model"
 	"MindPalace/internal/mindPalace/mpapp"
-
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
+	"time"
 
 	"context"
 	"os"
@@ -18,18 +18,23 @@ import (
 var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
 
 func main() {
-	// read config file and setup logger
+	// setup logger
 	log.SetFormatter(&log.JSONFormatter{})
+	log.SetLevel(log.InfoLevel) // default log level
+
+	// read config file and setup logger level
 	config, err := configuration.ReadConfig(PathToConfig)
 	if err != nil {
 		log.WithField("reason", err).Fatal("error occurred when read config file")
 	}
 	lvl, err := log.ParseLevel(config.Logger.Level)
 	if err != nil {
-		log.WithField("reason", err).Fatal("failed to parse log level")
+		lvl = log.InfoLevel
+		log.WithField("reason", err).Error("failed to parse log level")
 	}
 	log.SetLevel(lvl)
-	log.Debugf("Set log level to %s", lvl)
+	log.WithField("value", config).Debug("config successfully parsed")
+	log.Debugf("set log level to %s", lvl)
 
 	// setup DB
 	var dbDAO model.IDAO
@@ -40,28 +45,31 @@ func main() {
 	log.Info("successfully connected to DB")
 
 	// setup services
-	ctx, done := context.WithCancel(context.Background())
+	ctx, ctxDone := context.WithCancel(context.Background())
 	eg, egContext := errgroup.WithContext(ctx)
-	exitChl := make(chan os.Signal, 1)
-	signal.Notify(exitChl, syscall.SIGINT, syscall.SIGTERM)
+	httpSerer := mpapp.NewHttpServer(config, &dbDAO)
 
 	eg.Go(func() error {
-		httpSerer := mpapp.NewHttpServer(config, &dbDAO)
 		err = httpSerer.ListenAndServe()
-		if err != nil {
-			return err
-		}
-		<-egContext.Done()
-		err = httpSerer.ShoutDown()
 		return err
 	})
 
 	eg.Go(func() error {
+		exitChl := make(chan os.Signal, 1)
+		signal.Notify(exitChl, syscall.SIGINT, syscall.SIGTERM)
 		select {
 		case <-exitChl:
-			done()
+			// case when captured os signal
+			ctxDone()
 		case <-egContext.Done():
+			// case when captured error in errgroup
 			return egContext.Err()
+		}
+		ctxWithTimeout, ctxWithTimeoutCancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer ctxWithTimeoutCancel()
+		err = httpSerer.ShoutDown(ctxWithTimeout)
+		if err != nil {
+			log.WithField("reason", err).Fatal("error handled when shutdown HTTP server")
 		}
 		return nil
 	})
