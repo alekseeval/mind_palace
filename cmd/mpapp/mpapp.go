@@ -5,9 +5,11 @@ import (
 	"MindPalace/internal/mindPalace/dal"
 	"MindPalace/internal/mindPalace/model"
 	"MindPalace/internal/mindPalace/mpapp"
-	"context"
+
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
+
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
