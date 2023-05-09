@@ -8,9 +8,10 @@ import (
 type Config struct {
 	System struct {
 		Http struct {
-			Host    string `mapstructure:"host"`
-			Port    int    `mapstructure:"port"`
-			Timeout int    `mapstructure:"timeout"`
+			Host         string `mapstructure:"host"`
+			Port         int    `mapstructure:"port"`
+			ReadTimeout  int    `mapstructure:"read_timeout"`
+			WriteTimeout int    `mapstructure:"write_timeout"`
 		} `mapstructure:"http"`
 		Grpc struct {
 			Port int `mapstructure:"port"`
