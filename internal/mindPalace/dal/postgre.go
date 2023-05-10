@@ -146,6 +146,16 @@ func (p *PostgresDB) GetUserByTgId(telegramId int64) (*model.User, error) {
 	return &user, nil
 }
 
+func (p *PostgresDB) GetUserById(userId int) (*model.User, error) {
+	row := p.db.QueryRowx(`SELECT * FROM get_user_by_id($1)`, userId)
+	var user model.User
+	err := row.StructScan(&user)
+	if err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (p *PostgresDB) ChangeUser(user *model.User) (*model.User, error) {
 	row := p.db.QueryRowx(`SELECT * FROM change_user($1, $2, $3)`, user.Id, user.Name, user.TelegramId)
 	err := row.StructScan(user)
