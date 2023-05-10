@@ -1,37 +1,35 @@
 package mpapp
 
 import (
+	"MindPalace/internal/mindPalace/model"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
 )
 
-// e.POST("/authorize")
-func (s *HttpServer) authorize(c echo.Context) error {
-	tgId, err := strconv.ParseInt(c.FormValue("tg_id"), 10, 64)
+// e.POST("/users")
+func (s *HttpServer) createUser(c echo.Context) error {
+	u := model.User{}
+	err := (&echo.DefaultBinder{}).BindBody(c, &u)
 	if err != nil {
 		return err
 	}
-	user, err := s.storage.GetUserByTgId(tgId)
+	user, err := s.storage.SaveUser(u)
 	if err != nil {
 		return err
 	}
-
 	return c.JSON(http.StatusOK, user)
 }
 
-// TODO: переписать
-// e.POST("/register")
-func (s *HttpServer) register(c echo.Context) error {
-
-	tgId, err := strconv.ParseInt(c.FormValue("tg_id"), 10, 64)
+// e.GET("/users/:id")
+func (s *HttpServer) getUser(c echo.Context) error {
+	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		return err
 	}
-	user, err := s.storage.GetUserByTgId(tgId)
+	user, err := s.storage.GetUserById(userId)
 	if err != nil {
 		return err
 	}
-
 	return c.JSON(http.StatusOK, user)
 }

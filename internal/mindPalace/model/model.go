@@ -9,23 +9,23 @@ const (
 )
 
 type User struct {
-	Id         int     `db:"id"`
-	Name       *string `db:"name"`
-	TelegramId *int64  `db:"tg_id"`
+	Id         int     `db:"id" json:"id"`
+	Name       *string `db:"name" json:"name"`
+	TelegramId *int64  `db:"tg_id" json:"tg_id"`
 }
 
 type Theme struct {
-	Id          int    `db:"id"`
-	Title       string `db:"title"`
-	MainThemeId *int   `db:"main_theme_id"`
-	UserId      *int   `db:"user_id"`
+	Id          int    `db:"id" json:"id"`
+	Title       string `db:"title" json:"title"`
+	MainThemeId *int   `db:"main_theme_id" json:"main_theme_id"`
+	UserId      *int   `db:"user_id" json:"user_id"`
 }
 
 type Note struct {
-	Id         int      `db:"id"`
-	Title      string   `db:"title"`
-	Text       string   `db:"text"`
-	NoteTypeId NoteType `db:"note_type"`
-	ThemeId    int      `db:"theme_id"`
-	UserId     int      `db:"user_id"`
+	Id         int      `db:"id" json:"id"`
+	Title      string   `db:"title" json:"title"`
+	Text       string   `db:"text" json:"text"`
+	NoteTypeId NoteType `db:"note_type" json:"note_type"`
+	ThemeId    int      `db:"theme_id" json:"theme_id"`
+	UserId     int      `db:"user_id" json:"user_id"`
 }

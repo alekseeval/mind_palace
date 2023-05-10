@@ -31,8 +31,8 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	httpServer.echo = e
 
 	// endpoints
-	e.POST("/authorize", httpServer.authorize)
-	e.POST("/register", httpServer.register)
+	e.GET("/users/:id", httpServer.getUser)
+	e.POST("/users", httpServer.createUser)
 
 	return httpServer
 }
