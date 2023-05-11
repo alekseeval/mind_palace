@@ -32,6 +32,9 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 
 	// endpoints
 	e.GET("/users/:id", httpServer.getUser)
+	e.GET("/telegram/users/:tg_id", httpServer.getUserByTgId)
+	e.DELETE("/users/:id", httpServer.deleteUser)
+	e.PATCH("/users/:id", httpServer.changeUser)
 	e.POST("/users", httpServer.createUser)
 
 	return httpServer
