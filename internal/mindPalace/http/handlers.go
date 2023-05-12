@@ -9,7 +9,7 @@ import (
 
 // e.POST("/users")
 func (s *HttpServer) createUser(c echo.Context) error {
-	u := model.UserUpdate{}
+	u := new(model.UserUpdate)
 	err := (&echo.DefaultBinder{}).BindBody(c, &u)
 	if err != nil {
 		return err
@@ -64,7 +64,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 // e.PATCH("/users/:id")
 func (s *HttpServer) changeUser(c echo.Context) error {
 	// read request parameters
-	updatedUserParams := model.UserUpdate{}
+	updatedUserParams := new(model.UserUpdate)
 	err := (&echo.DefaultBinder{}).BindBody(c, &updatedUserParams)
 	if err != nil {
 		return err
