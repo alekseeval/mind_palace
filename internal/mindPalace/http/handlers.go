@@ -14,11 +14,12 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	user, err := s.storage.SaveUser(u.ToUser())
+	user := u.UpdateUser(&model.User{})
+	dbUser, err := s.storage.SaveUser(*user)
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, dbUser)
 }
 
 // e.GET("/users/:id")
@@ -62,6 +63,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 
 // e.PATCH("/users/:id")
 func (s *HttpServer) changeUser(c echo.Context) error {
+	// read request parameters
 	updatedUserParams := model.UserUpdate{}
 	err := (&echo.DefaultBinder{}).BindBody(c, &updatedUserParams)
 	if err != nil {
@@ -71,9 +73,14 @@ func (s *HttpServer) changeUser(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	user := updatedUserParams.ToUser()
-	user.Id = userId
-	dbUser, err := s.storage.ChangeUser(&user)
+
+	// update user in db
+	user, err := s.storage.GetUserById(userId)
+	if err != nil {
+		return err
+	}
+	user = updatedUserParams.UpdateUser(user)
+	dbUser, err := s.storage.ChangeUser(user)
 	if err != nil {
 		return err
 	}

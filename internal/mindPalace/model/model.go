@@ -19,11 +19,14 @@ type UserUpdate struct {
 	TelegramId *int64  `db:"tg_id" json:"tg_id"`
 }
 
-func (u *UserUpdate) ToUser() User {
-	return User{
-		Name:       u.Name,
-		TelegramId: u.TelegramId,
+func (u *UserUpdate) UpdateUser(user *User) *User {
+	if u.Name != nil {
+		user.Name = u.Name
 	}
+	if u.TelegramId != nil {
+		user.TelegramId = u.TelegramId
+	}
+	return user
 }
 
 type Theme struct {
