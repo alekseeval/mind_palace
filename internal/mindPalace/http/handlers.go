@@ -58,7 +58,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, deletedUserId)
+	return c.JSON(http.StatusOK, echo.Map{"id": deletedUserId})
 }
 
 // e.PATCH("/users/:id")
