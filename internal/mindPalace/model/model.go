@@ -14,6 +14,18 @@ type User struct {
 	TelegramId *int64  `db:"tg_id" json:"tg_id"`
 }
 
+type UserUpdate struct {
+	Name       *string `db:"name" json:"name"`
+	TelegramId *int64  `db:"tg_id" json:"tg_id"`
+}
+
+func (u *UserUpdate) ToUser() User {
+	return User{
+		Name:       u.Name,
+		TelegramId: u.TelegramId,
+	}
+}
+
 type Theme struct {
 	Id          int    `db:"id" json:"id"`
 	Title       string `db:"title" json:"title"`

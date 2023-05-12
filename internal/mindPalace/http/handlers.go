@@ -1,4 +1,4 @@
-package mpapp
+package http
 
 import (
 	"MindPalace/internal/mindPalace/model"
@@ -9,12 +9,12 @@ import (
 
 // e.POST("/users")
 func (s *HttpServer) createUser(c echo.Context) error {
-	u := model.User{}
+	u := model.UserUpdate{}
 	err := (&echo.DefaultBinder{}).BindBody(c, &u)
 	if err != nil {
 		return err
 	}
-	user, err := s.storage.SaveUser(u)
+	user, err := s.storage.SaveUser(u.ToUser())
 	if err != nil {
 		return err
 	}
@@ -62,8 +62,8 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 
 // e.PATCH("/users/:id")
 func (s *HttpServer) changeUser(c echo.Context) error {
-	u := model.User{}
-	err := (&echo.DefaultBinder{}).BindBody(c, &u)
+	updatedUserParams := model.UserUpdate{}
+	err := (&echo.DefaultBinder{}).BindBody(c, &updatedUserParams)
 	if err != nil {
 		return err
 	}
@@ -71,10 +71,11 @@ func (s *HttpServer) changeUser(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	u.Id = userId
-	user, err := s.storage.ChangeUser(&u)
+	user := updatedUserParams.ToUser()
+	user.Id = userId
+	dbUser, err := s.storage.ChangeUser(&user)
 	if err != nil {
 		return err
 	}
-	return c.JSON(http.StatusOK, user)
+	return c.JSON(http.StatusOK, dbUser)
 }

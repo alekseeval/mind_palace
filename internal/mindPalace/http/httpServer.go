@@ -1,4 +1,4 @@
-package mpapp
+package http
 
 import (
 	"MindPalace/internal/mindPalace/configuration"

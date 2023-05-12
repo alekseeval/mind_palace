@@ -3,8 +3,8 @@ package main
 import (
 	"MindPalace/internal/mindPalace/configuration"
 	"MindPalace/internal/mindPalace/dal"
+	"MindPalace/internal/mindPalace/http"
 	"MindPalace/internal/mindPalace/model"
-	"MindPalace/internal/mindPalace/mpapp"
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"time"
@@ -48,7 +48,7 @@ func main() {
 	// setup services
 	ctx, ctxDone := context.WithCancel(context.Background())
 	eg, egContext := errgroup.WithContext(ctx)
-	httpSerer := mpapp.NewHttpServer(config, dbDAO)
+	httpSerer := http.NewHttpServer(config, dbDAO)
 
 	eg.Go(func() error {
 		err = httpSerer.ListenAndServe()
