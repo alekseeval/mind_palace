@@ -17,14 +17,14 @@ func customHTTPErrorHandler(err error, c echo.Context) {
 	if c.Response().Committed {
 		return
 	}
-	he, ok := err.(*model.HttpError)
+	he, ok := err.(*model.ServerError)
 	if ok {
 		err = c.JSON(http.StatusInternalServerError, he)
 		if err != nil {
 			log.Error(err)
 		}
 	} else {
-		err = c.JSON(http.StatusInternalServerError, model.NewHTTPError(model.InternalServerError, err))
+		err = c.JSON(http.StatusInternalServerError, model.NewServerError(model.InternalServerError, err))
 		if err != nil {
 			log.Error(err)
 		}

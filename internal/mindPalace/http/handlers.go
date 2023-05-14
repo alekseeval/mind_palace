@@ -17,7 +17,7 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	user := userData.UpdateUser(&model.User{})
 	dbUser, err := s.storage.SaveUser(*user)
 	if err != nil {
-		return model.NewHTTPError(model.DbError, err)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, dbUser)
 }
@@ -30,7 +30,7 @@ func (s *HttpServer) getUser(c echo.Context) error {
 	}
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
-		return model.NewHTTPError(model.NoSuchUser, nil)
+		return model.NewServerError(model.NoSuchUser, nil)
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -43,7 +43,7 @@ func (s *HttpServer) getUserByTgId(c echo.Context) error {
 	}
 	user, err := s.storage.GetUserByTgId(userTgId)
 	if err != nil {
-		return model.NewHTTPError(model.NoSuchUser, nil)
+		return model.NewServerError(model.NoSuchUser, nil)
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -56,7 +56,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 	}
 	deletedUserId, err := s.storage.DeleteUser(userId)
 	if err != nil {
-		return model.NewHTTPError(model.NoSuchUser, nil)
+		return model.NewServerError(model.NoSuchUser, nil)
 	}
 	return c.JSON(http.StatusOK, echo.Map{"id": deletedUserId})
 }
@@ -77,12 +77,12 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	// update user in db
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
-		return model.NewHTTPError(model.NoSuchUser, nil)
+		return model.NewServerError(model.NoSuchUser, nil)
 	}
 	user = updatedUserParams.UpdateUser(user)
 	dbUser, err := s.storage.ChangeUser(user)
 	if err != nil {
-		return model.NewHTTPError(model.DbError, err)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, dbUser)
 }
@@ -92,12 +92,12 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 	themeData := new(model.ThemeUpdate)
 	err := c.Bind(&themeData)
 	if err != nil {
-		return model.NewHTTPError(model.InternalServerError, err)
+		return model.NewServerError(model.InternalServerError, err)
 	}
 	theme := themeData.UpdateTheme(&model.Theme{})
 	theme, err = s.storage.CreateTheme(*theme)
 	if err != nil {
-		return model.NewHTTPError(model.DbError, err)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, theme)
 }
@@ -106,11 +106,11 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 func (s *HttpServer) getUserThemes(c echo.Context) error {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return model.NewHTTPError(model.InternalServerError, err)
+		return model.NewServerError(model.InternalServerError, err)
 	}
 	userThemes, err := s.storage.GetAllUserThemes(userId)
 	if err != nil {
-		return model.NewHTTPError(model.DbError, err)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, userThemes)
 }
@@ -119,11 +119,11 @@ func (s *HttpServer) getUserThemes(c echo.Context) error {
 func (s *HttpServer) deleteTheme(c echo.Context) error {
 	themeId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return model.NewHTTPError(model.InternalServerError, err)
+		return model.NewServerError(model.InternalServerError, err)
 	}
 	deleteThemeId, err := s.storage.DeleteTheme(themeId)
 	if err != nil {
-		return model.NewHTTPError(model.DbError, err)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, echo.Map{"id": deleteThemeId})
 }
@@ -133,17 +133,17 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 	themeId, err := strconv.Atoi(c.Param("theme_id"))
 	userId, err := strconv.Atoi(c.Param("user_id"))
 	if err != nil {
-		return model.NewHTTPError(model.InternalServerError, err)
+		return model.NewServerError(model.InternalServerError, err)
 	}
 	themeData := new(model.ThemeUpdate)
 	err = c.Bind(&themeData)
 	if err != nil {
-		return model.NewHTTPError(model.InternalServerError, err)
+		return model.NewServerError(model.InternalServerError, err)
 	}
 	theme := themeData.UpdateTheme(&model.Theme{Id: themeId, UserId: &userId})
 	theme, err = s.storage.ChangeTheme(theme)
 	if err != nil {
-		return model.NewHTTPError(model.DbError, err)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, theme)
 }
