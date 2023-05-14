@@ -108,8 +108,8 @@ func (p *PostgresDB) GetAllUserThemes(userId int) ([]*model.Theme, error) {
 }
 
 func (p *PostgresDB) ChangeTheme(theme *model.Theme) (*model.Theme, error) {
-	row := p.db.QueryRowx(`SELECT * FROM create_theme($1, $2, $3, $4)`,
-		theme.Id, theme.Title, theme.MainThemeId, theme.UserId)
+	row := p.db.QueryRowx(`SELECT * FROM change_theme($1, $2, $3)`,
+		theme.Id, theme.Title, theme.MainThemeId)
 	err := row.StructScan(theme)
 	return theme, err
 }
