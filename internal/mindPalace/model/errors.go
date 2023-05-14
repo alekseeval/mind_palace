@@ -6,6 +6,9 @@ const (
 	NoSuchUser          = 1002
 	UserExists          = 1003
 	TgIdInUse           = 1004
+	NoSuchTheme         = 1005
+	ThemeExists         = 1006
+	NoSuchMainTheme     = 1007
 )
 
 var ErrMap = map[int]string{
@@ -14,6 +17,9 @@ var ErrMap = map[int]string{
 	NoSuchUser:          "No such user",
 	UserExists:          "User already exists",
 	TgIdInUse:           "Telegram id is used by other user",
+	NoSuchTheme:         "No such theme",
+	ThemeExists:         "Theme already exists",
+	NoSuchMainTheme:     "No such main theme",
 }
 
 type HttpError struct {
