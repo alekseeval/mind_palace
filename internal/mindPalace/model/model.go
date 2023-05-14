@@ -39,7 +39,6 @@ type Theme struct {
 type ThemeUpdate struct {
 	Title       *string `json:"title"`
 	MainThemeId *int    `json:"main_theme_id"`
-	UserId      *int    `json:"user_id"`
 }
 
 func (tu *ThemeUpdate) UpdateTheme(theme *Theme) *Theme {
@@ -48,9 +47,6 @@ func (tu *ThemeUpdate) UpdateTheme(theme *Theme) *Theme {
 	}
 	if tu.MainThemeId != nil {
 		theme.MainThemeId = tu.MainThemeId
-	}
-	if tu.UserId != nil {
-		theme.UserId = tu.UserId
 	}
 	return theme
 }
