@@ -30,7 +30,7 @@ func (s *HttpServer) getUser(c echo.Context) error {
 	}
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
-		return model.NewServerError(model.NoSuchUser, nil)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -43,7 +43,7 @@ func (s *HttpServer) getUserByTgId(c echo.Context) error {
 	}
 	user, err := s.storage.GetUserByTgId(userTgId)
 	if err != nil {
-		return model.NewServerError(model.NoSuchUser, nil)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -56,7 +56,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 	}
 	deletedUserId, err := s.storage.DeleteUser(userId)
 	if err != nil {
-		return model.NewServerError(model.NoSuchUser, nil)
+		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, echo.Map{"id": deletedUserId})
 }
@@ -77,7 +77,7 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	// update user in db
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
-		return model.NewServerError(model.NoSuchUser, nil)
+		return model.NewServerError(model.DbError, err)
 	}
 	user = updatedUserParams.UpdateUser(user)
 	dbUser, err := s.storage.ChangeUser(user)
