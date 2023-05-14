@@ -26,8 +26,11 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	// setup echo
 	e := echo.New()
 	e.HideBanner = true
+	e.Debug = false
 	e.Server.ReadTimeout = time.Duration(httpServer.httpConfig.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(httpServer.httpConfig.WriteTimeout) * time.Second
+	e.HTTPErrorHandler = customHTTPErrorHandler
+	e.Use(logMiddleware)
 	httpServer.echo = e
 
 	// endpoints
