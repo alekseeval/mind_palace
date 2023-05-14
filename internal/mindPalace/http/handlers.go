@@ -87,6 +87,7 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dbUser)
 }
 
+// e.POST("/themes")
 func (s *HttpServer) createTheme(c echo.Context) error {
 	themeData := new(model.ThemeUpdate)
 	err := c.Bind(&themeData)
@@ -101,6 +102,7 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 	return c.JSON(http.StatusOK, theme)
 }
 
+// e.GET("/users/:id/themes")
 func (s *HttpServer) getUserThemes(c echo.Context) error {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -113,6 +115,7 @@ func (s *HttpServer) getUserThemes(c echo.Context) error {
 	return c.JSON(http.StatusOK, userThemes)
 }
 
+// e.DELETE("/themes/:id")
 func (s *HttpServer) deleteTheme(c echo.Context) error {
 	themeId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -125,6 +128,7 @@ func (s *HttpServer) deleteTheme(c echo.Context) error {
 	return c.JSON(http.StatusOK, echo.Map{"id": deleteThemeId})
 }
 
+// e.PATCH("/users/:user_id/theme/:theme_id")
 func (s *HttpServer) editTheme(c echo.Context) error {
 	themeId, err := strconv.Atoi(c.Param("theme_id"))
 	userId, err := strconv.Atoi(c.Param("user_id"))
