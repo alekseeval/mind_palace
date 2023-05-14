@@ -22,12 +22,14 @@ var ErrMap = map[int]string{
 	NoSuchMainTheme:     "No such main theme",
 }
 
+// TODO: remane to ServerError
 type HttpError struct {
 	Code    int    `json:"code"`
 	Key     string `json:"key,omitempty"`
 	Message string `json:"msg,omitempty"`
 }
 
+// TODO: remane to NewServerError
 func NewHTTPError(code int, err error) *HttpError {
 	he := &HttpError{
 		Code:    code,
