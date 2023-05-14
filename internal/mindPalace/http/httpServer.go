@@ -37,8 +37,13 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	e.GET("/users/:id", httpServer.getUser)
 	e.GET("/telegram/users/:tg_id", httpServer.getUserByTgId)
 	e.DELETE("/users/:id", httpServer.deleteUser)
-	e.PATCH("/users/:id", httpServer.changeUser)
+	e.PATCH("/users/:id", httpServer.editUser)
 	e.POST("/users", httpServer.createUser)
+
+	e.POST("/themes", httpServer.createTheme)
+	e.GET("/themes/user/:id", httpServer.getUserThemes)
+	e.DELETE("/themes/:id", httpServer.deleteTheme)
+	e.PATCH("/users/:user_id/theme/:theme_id", httpServer.editTheme)
 
 	return httpServer
 }

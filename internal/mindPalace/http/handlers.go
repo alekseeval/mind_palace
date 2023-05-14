@@ -9,12 +9,12 @@ import (
 
 // e.POST("/users")
 func (s *HttpServer) createUser(c echo.Context) error {
-	u := new(model.UserUpdate)
-	err := (&echo.DefaultBinder{}).BindBody(c, &u)
+	userData := new(model.UserUpdate)
+	err := (&echo.DefaultBinder{}).BindBody(c, &userData)
 	if err != nil {
 		return err
 	}
-	user := u.UpdateUser(&model.User{})
+	user := userData.UpdateUser(&model.User{})
 	dbUser, err := s.storage.SaveUser(*user)
 	if err != nil {
 		return model.NewHTTPError(model.DbError, err)
@@ -62,7 +62,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 }
 
 // e.PATCH("/users/:id")
-func (s *HttpServer) changeUser(c echo.Context) error {
+func (s *HttpServer) editUser(c echo.Context) error {
 	// read request parameters
 	updatedUserParams := new(model.UserUpdate)
 	err := (&echo.DefaultBinder{}).BindBody(c, &updatedUserParams)
@@ -85,4 +85,61 @@ func (s *HttpServer) changeUser(c echo.Context) error {
 		return model.NewHTTPError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, dbUser)
+}
+
+func (s *HttpServer) createTheme(c echo.Context) error {
+	themeData := new(model.ThemeUpdate)
+	err := c.Bind(&themeData)
+	if err != nil {
+		return model.NewHTTPError(model.InternalServerError, err)
+	}
+	theme := themeData.UpdateTheme(&model.Theme{})
+	theme, err = s.storage.CreateTheme(*theme)
+	if err != nil {
+		return model.NewHTTPError(model.DbError, err)
+	}
+	return c.JSON(http.StatusOK, theme)
+}
+
+func (s *HttpServer) getUserThemes(c echo.Context) error {
+	userId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return model.NewHTTPError(model.InternalServerError, err)
+	}
+	userThemes, err := s.storage.GetAllUserThemes(userId)
+	if err != nil {
+		return model.NewHTTPError(model.DbError, err)
+	}
+	return c.JSON(http.StatusOK, userThemes)
+}
+
+func (s *HttpServer) deleteTheme(c echo.Context) error {
+	themeId, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return model.NewHTTPError(model.InternalServerError, err)
+	}
+	deleteThemeId, err := s.storage.DeleteTheme(themeId)
+	if err != nil {
+		return model.NewHTTPError(model.DbError, err)
+	}
+	return c.JSON(http.StatusOK, echo.Map{"id": deleteThemeId})
+}
+
+func (s *HttpServer) editTheme(c echo.Context) error {
+	themeId, err := strconv.Atoi(c.Param("theme_id"))
+	userId, err := strconv.Atoi(c.Param("user_id"))
+	if err != nil {
+		return model.NewHTTPError(model.InternalServerError, err)
+	}
+	themeData := new(model.ThemeUpdate)
+	err = c.Bind(&themeData)
+	if err != nil {
+		return model.NewHTTPError(model.InternalServerError, err)
+	}
+	theme := themeData.UpdateTheme(&model.Theme{Id: themeId, UserId: &userId})
+	theme, err = s.storage.ChangeTheme(theme)
+	if err != nil {
+		return model.NewHTTPError(model.DbError, err)
+	}
+	return c.JSON(http.StatusOK, theme)
 }
