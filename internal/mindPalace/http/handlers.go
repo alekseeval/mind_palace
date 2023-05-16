@@ -19,7 +19,7 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.DbError, err)
 	}
-	return c.JSON(http.StatusOK, dbUser)
+	return c.JSON(http.StatusCreated, dbUser)
 }
 
 // e.GET("/users/:id")
@@ -99,7 +99,7 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.DbError, err)
 	}
-	return c.JSON(http.StatusOK, theme)
+	return c.JSON(http.StatusCreated, theme)
 }
 
 // e.GET("/users/:id/themes")
@@ -146,4 +146,10 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 		return model.NewServerError(model.DbError, err)
 	}
 	return c.JSON(http.StatusOK, theme)
+}
+
+// e.POST("/users/:user_id/theme/:theme_id/note")
+func (s *HttpServer) createNote(c echo.Context) error {
+
+	return c.NoContent(http.StatusCreated)
 }
