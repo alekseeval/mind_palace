@@ -15,6 +15,14 @@ BEGIN
             RAISE EXCEPTION 'no such user';
         end if;
     end if;
+
+    if p_main_theme_id is not null then
+        select id into p_main_theme_id from themes where id=p_main_theme_id;
+        if p_main_theme_id is null then
+            RAISE EXCEPTION 'no such main theme';
+        end if;
+    end if;
+
     INSERT INTO mind_palace.themes(title, main_theme_id, user_id) VALUES (p_title, p_main_theme_id, v_user_id) RETURNING id INTO r_id;
     RETURN r_id;
 END;
