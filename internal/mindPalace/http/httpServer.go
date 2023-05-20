@@ -41,9 +41,9 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	e.POST("/users", httpServer.createUser)
 
 	e.POST("/themes", httpServer.createTheme)
-	e.GET("/users/:id/themes", httpServer.getUserThemes)
+	e.GET("/themes", httpServer.getUserThemes)
 	e.DELETE("/themes/:id", httpServer.deleteTheme)
-	e.PATCH("/users/:user_id/theme/:theme_id", httpServer.editTheme)
+	e.PATCH("/themes/:id", httpServer.editTheme)
 
 	return httpServer
 }

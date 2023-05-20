@@ -7,6 +7,9 @@ import (
 	"strconv"
 )
 
+// ---------------------------------------------------------------------------------------------------------------------
+//  User API
+// ---------------------------------------------------------------------------------------------------------------------
 // e.POST("/users")
 func (s *HttpServer) createUser(c echo.Context) error {
 	userData := new(model.UserUpdate)
@@ -87,6 +90,9 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dbUser)
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+//  Themes API
+// ---------------------------------------------------------------------------------------------------------------------
 // e.POST("/themes")
 func (s *HttpServer) createTheme(c echo.Context) error {
 	themeData := new(model.ThemeUpdate)
@@ -94,7 +100,19 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
 	}
-	theme := themeData.UpdateTheme(&model.Theme{})
+	userIdHeader := c.Request().Header["Metadata-User-Id"]
+	var userId *int
+	if len(userIdHeader) != 0 {
+		id, err := strconv.Atoi(userIdHeader[0])
+		if err != nil {
+			return model.NewServerError(model.InternalServerError, err)
+		}
+		userId = &id
+	}
+	if err != nil {
+		return model.NewServerError(model.InternalServerError, err)
+	}
+	theme := themeData.UpdateTheme(&model.Theme{UserId: userId})
 	theme, err = s.storage.CreateTheme(*theme)
 	if err != nil {
 		return model.NewServerError(model.DbError, err)
@@ -148,6 +166,9 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 	return c.JSON(http.StatusOK, theme)
 }
 
+// ---------------------------------------------------------------------------------------------------------------------
+//  Notes API
+// ---------------------------------------------------------------------------------------------------------------------
 // e.POST("/users/:user_id/theme/:theme_id/note")
 func (s *HttpServer) createNote(c echo.Context) error {
 
