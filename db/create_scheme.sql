@@ -29,14 +29,11 @@ CREATE TABLE if not exists mind_palace.note_types (
 
 CREATE TABLE if not exists mind_palace.notes (
     id serial PRIMARY KEY,
-    title VARCHAR NOT NULL,
+    title VARCHAR NOT NULL UNIQUE ,
     text VARCHAR NOT NULL,
     note_type int NOT NULL,
     theme_id int NOT NULL,
-    user_id int NOT NULL,
 
-    UNIQUE(title, user_id),
     FOREIGN KEY (theme_id) REFERENCES mind_palace.themes (id),
-    FOREIGN KEY (note_type) REFERENCES mind_palace.note_types (id),
-    FOREIGN KEY (user_id) REFERENCES mind_palace.users (id)
+    FOREIGN KEY (note_type) REFERENCES mind_palace.note_types (id)
 );
