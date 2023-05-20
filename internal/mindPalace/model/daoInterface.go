@@ -15,15 +15,15 @@ type IUserDAO interface {
 }
 
 type IThemeDAO interface {
-	CreateTheme(theme Theme) (*Theme, error)
-	GetAllUserThemes(userId int) ([]*Theme, error)
+	SaveTheme(theme Theme) (*Theme, error)
+	GetAllUserThemes(userName string) ([]*Theme, error)
 	ChangeTheme(theme *Theme) (*Theme, error)
 	DeleteTheme(themeId int) (int, error)
 }
 
 type INoteDAO interface {
-	CreateNote(note Note) (*Note, error)
-	GetAllUserNotesByTheme(userId int, themeId int) ([]*Note, error)
+	SaveNote(note Note) (*Note, error)
+	GetAllNotesByTheme(themeId int) ([]*Note, error)
 	ChangeNote(note *Note) (*Note, error)
 	DeleteNote(noteId int) (int, error)
 }

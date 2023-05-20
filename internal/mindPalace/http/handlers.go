@@ -93,78 +93,78 @@ func (s *HttpServer) editUser(c echo.Context) error {
 // ---------------------------------------------------------------------------------------------------------------------
 //  Themes API
 // ---------------------------------------------------------------------------------------------------------------------
-// e.POST("/themes")
-func (s *HttpServer) createTheme(c echo.Context) error {
-	themeData := new(model.ThemeUpdate)
-	err := c.Bind(&themeData)
-	if err != nil {
-		return model.NewServerError(model.InternalServerError, err)
-	}
-	userIdHeader := c.Request().Header["Metadata-User-Id"]
-	var userId *int
-	if len(userIdHeader) != 0 {
-		id, err := strconv.Atoi(userIdHeader[0])
-		if err != nil {
-			return model.NewServerError(model.InternalServerError, err)
-		}
-		userId = &id
-	}
-	if err != nil {
-		return model.NewServerError(model.InternalServerError, err)
-	}
-	theme := themeData.UpdateTheme(&model.Theme{UserId: userId})
-	theme, err = s.storage.CreateTheme(*theme)
-	if err != nil {
-		return model.NewServerError(model.DbError, err)
-	}
-	return c.JSON(http.StatusCreated, theme)
-}
-
-// e.GET("/users/:id/themes")
-func (s *HttpServer) getUserThemes(c echo.Context) error {
-	userId, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		return model.NewServerError(model.InternalServerError, err)
-	}
-	userThemes, err := s.storage.GetAllUserThemes(userId)
-	if err != nil {
-		return model.NewServerError(model.DbError, err)
-	}
-	return c.JSON(http.StatusOK, userThemes)
-}
-
-// e.DELETE("/themes/:id")
-func (s *HttpServer) deleteTheme(c echo.Context) error {
-	themeId, err := strconv.Atoi(c.Param("id"))
-	if err != nil {
-		return model.NewServerError(model.InternalServerError, err)
-	}
-	deleteThemeId, err := s.storage.DeleteTheme(themeId)
-	if err != nil {
-		return model.NewServerError(model.DbError, err)
-	}
-	return c.JSON(http.StatusOK, echo.Map{"id": deleteThemeId})
-}
-
-// e.PATCH("/users/:user_id/theme/:theme_id")
-func (s *HttpServer) editTheme(c echo.Context) error {
-	themeId, err := strconv.Atoi(c.Param("theme_id"))
-	userId, err := strconv.Atoi(c.Param("user_id"))
-	if err != nil {
-		return model.NewServerError(model.InternalServerError, err)
-	}
-	themeData := new(model.ThemeUpdate)
-	err = c.Bind(&themeData)
-	if err != nil {
-		return model.NewServerError(model.InternalServerError, err)
-	}
-	theme := themeData.UpdateTheme(&model.Theme{Id: themeId, UserId: &userId})
-	theme, err = s.storage.ChangeTheme(theme)
-	if err != nil {
-		return model.NewServerError(model.DbError, err)
-	}
-	return c.JSON(http.StatusOK, theme)
-}
+//// e.POST("/themes")
+//func (s *HttpServer) createTheme(c echo.Context) error {
+//	themeData := new(model.ThemeUpdate)
+//	err := c.Bind(&themeData)
+//	if err != nil {
+//		return model.NewServerError(model.InternalServerError, err)
+//	}
+//	userIdHeader := c.Request().Header["Metadata-User-Id"]
+//	var userId *int
+//	if len(userIdHeader) != 0 {
+//		id, err := strconv.Atoi(userIdHeader[0])
+//		if err != nil {
+//			return model.NewServerError(model.InternalServerError, err)
+//		}
+//		userId = &id
+//	}
+//	if err != nil {
+//		return model.NewServerError(model.InternalServerError, err)
+//	}
+//	theme := themeData.UpdateTheme(&model.Theme{UserId: userId})
+//	theme, err = s.storage.SaveTheme(*theme)
+//	if err != nil {
+//		return model.NewServerError(model.DbError, err)
+//	}
+//	return c.JSON(http.StatusCreated, theme)
+//}
+//
+//// e.GET("/users/:id/themes")
+//func (s *HttpServer) getUserThemes(c echo.Context) error {
+//	userId, err := strconv.Atoi(c.Param("id"))
+//	if err != nil {
+//		return model.NewServerError(model.InternalServerError, err)
+//	}
+//	userThemes, err := s.storage.GetAllUserThemes(userId)
+//	if err != nil {
+//		return model.NewServerError(model.DbError, err)
+//	}
+//	return c.JSON(http.StatusOK, userThemes)
+//}
+//
+//// e.DELETE("/themes/:id")
+//func (s *HttpServer) deleteTheme(c echo.Context) error {
+//	themeId, err := strconv.Atoi(c.Param("id"))
+//	if err != nil {
+//		return model.NewServerError(model.InternalServerError, err)
+//	}
+//	deleteThemeId, err := s.storage.DeleteTheme(themeId)
+//	if err != nil {
+//		return model.NewServerError(model.DbError, err)
+//	}
+//	return c.JSON(http.StatusOK, echo.Map{"id": deleteThemeId})
+//}
+//
+//// e.PATCH("/users/:user_id/theme/:theme_id")
+//func (s *HttpServer) editTheme(c echo.Context) error {
+//	themeId, err := strconv.Atoi(c.Param("theme_id"))
+//	userId, err := strconv.Atoi(c.Param("user_id"))
+//	if err != nil {
+//		return model.NewServerError(model.InternalServerError, err)
+//	}
+//	themeData := new(model.ThemeUpdate)
+//	err = c.Bind(&themeData)
+//	if err != nil {
+//		return model.NewServerError(model.InternalServerError, err)
+//	}
+//	theme := themeData.UpdateTheme(&model.Theme{Id: themeId, UserId: &userId})
+//	theme, err = s.storage.ChangeTheme(theme)
+//	if err != nil {
+//		return model.NewServerError(model.DbError, err)
+//	}
+//	return c.JSON(http.StatusOK, theme)
+//}
 
 // ---------------------------------------------------------------------------------------------------------------------
 //  Notes API
