@@ -113,7 +113,7 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 		return model.NewServerError(model.InternalServerError, err)
 	}
 	theme := themeData.UpdateTheme(&model.Theme{UserId: userId})
-	theme, err = s.storage.CreateTheme(*theme)
+	theme, err = s.storage.SaveTheme(*theme)
 	if err != nil {
 		return model.NewServerError(model.DbError, err)
 	}

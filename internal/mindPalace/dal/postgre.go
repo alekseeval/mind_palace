@@ -31,7 +31,7 @@ func NewPostgresDB(config *configuration.Config) (*PostgresDB, error) {
 //  NOTE IDAO IMPLEMENTATION
 // ---------------------------------------------------------------------------------------------------------------------
 
-func (p *PostgresDB) CreateNote(note model.Note) (*model.Note, error) {
+func (p *PostgresDB) SaveNote(note model.Note) (*model.Note, error) {
 	row := p.db.QueryRow(`SELECT * FROM create_note($1, $2, $3, $4, $5)`,
 		note.Title, note.Text, note.NoteTypeId, note.ThemeId, note.UserId)
 	var id int
@@ -43,7 +43,7 @@ func (p *PostgresDB) CreateNote(note model.Note) (*model.Note, error) {
 	return &note, nil
 }
 
-func (p *PostgresDB) GetAllUserNotesByTheme(userId int, themeId int) ([]*model.Note, error) {
+func (p *PostgresDB) GetAllNotesByTheme(userId int, themeId int) ([]*model.Note, error) {
 	rows, err := p.db.Queryx(`SELECT * FROM get_all_notes_for_user_by_theme($1, $2)`, userId, themeId)
 	if err != nil {
 		return nil, err
@@ -78,7 +78,7 @@ func (p *PostgresDB) DeleteNote(noteId int) (int, error) {
 //  THEME IDAO IMPLEMENTATION
 // ---------------------------------------------------------------------------------------------------------------------
 
-func (p *PostgresDB) CreateTheme(theme model.Theme) (*model.Theme, error) {
+func (p *PostgresDB) SaveTheme(theme model.Theme) (*model.Theme, error) {
 	row := p.db.QueryRow(`SELECT * FROM create_theme($1, $2, $3)`,
 		theme.Title, theme.MainThemeId, theme.UserId)
 	var id int
