@@ -9,7 +9,7 @@ type IDAO interface {
 type IUserDAO interface {
 	SaveUser(user User) (*User, error)
 	GetUserByTgId(telegramId int64) (*User, error)
-	GetUserById(userId int) (*User, error)
+	GetUserByName(userId int) (*User, error)
 	ChangeUser(user *User) (*User, error)
 	DeleteUser(userId int) (int, error)
 }

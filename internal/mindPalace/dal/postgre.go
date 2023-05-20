@@ -146,8 +146,8 @@ func (p *PostgresDB) GetUserByTgId(telegramId int64) (*model.User, error) {
 	return &user, nil
 }
 
-func (p *PostgresDB) GetUserById(userId int) (*model.User, error) {
-	row := p.db.QueryRowx(`SELECT * FROM get_user_by_id($1)`, userId)
+func (p *PostgresDB) GetUserByName(userId int) (*model.User, error) {
+	row := p.db.QueryRowx(`SELECT * FROM get_user_by_name($1)`, userId)
 	var user model.User
 	err := row.StructScan(&user)
 	if err != nil {
