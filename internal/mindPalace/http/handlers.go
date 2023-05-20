@@ -31,7 +31,7 @@ func (s *HttpServer) getUser(c echo.Context) error {
 	if err != nil {
 		return err
 	}
-	user, err := s.storage.GetUserByName(userId)
+	user, err := s.storage.GetUserById(userId)
 	if err != nil {
 		return model.NewServerError(model.DbError, err)
 	}
@@ -78,7 +78,7 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	}
 
 	// update user in db
-	user, err := s.storage.GetUserByName(userId)
+	user, err := s.storage.GetUserById(userId)
 	if err != nil {
 		return model.NewServerError(model.DbError, err)
 	}
