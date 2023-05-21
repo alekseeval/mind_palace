@@ -67,11 +67,9 @@ func (p *PostgresDB) ChangeNote(note *model.Note) (*model.Note, error) {
 	return note, err
 }
 
-func (p *PostgresDB) DeleteNote(noteId int) (int, error) {
-	row := p.db.QueryRow(`SELECT * FROM delete_note($1)`, noteId)
-	var deletedNoteId int
-	err := row.Scan(&deletedNoteId)
-	return deletedNoteId, err
+func (p *PostgresDB) DeleteNote(noteId int) error {
+	_, err := p.db.Exec(`SELECT * FROM delete_note($1)`, noteId)
+	return err
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -114,11 +112,9 @@ func (p *PostgresDB) ChangeTheme(theme *model.Theme) (*model.Theme, error) {
 	return theme, err
 }
 
-func (p *PostgresDB) DeleteTheme(themeId int) (int, error) {
-	row := p.db.QueryRow(`SELECT * FROM delete_theme($1)`, themeId)
-	var removeThemeId int
-	err := row.Scan(&removeThemeId)
-	return removeThemeId, err
+func (p *PostgresDB) DeleteTheme(themeId int) error {
+	_, err := p.db.Exec(`SELECT * FROM delete_theme($1)`, themeId)
+	return err
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -165,9 +161,7 @@ func (p *PostgresDB) ChangeUser(user *model.User) (*model.User, error) {
 	return user, nil
 }
 
-func (p *PostgresDB) DeleteUser(userId int) (int, error) {
-	row := p.db.QueryRowx(`SELECT * FROM delete_user($1)`, userId)
-	var deletedUserId int
-	err := row.Scan(&deletedUserId)
-	return deletedUserId, err
+func (p *PostgresDB) DeleteUser(userId int) error {
+	_, err := p.db.Exec(`SELECT * FROM delete_user($1)`, userId)
+	return err
 }
