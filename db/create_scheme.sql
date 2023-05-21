@@ -37,3 +37,5 @@ CREATE TABLE if not exists mind_palace.notes (
     FOREIGN KEY (theme_id) REFERENCES mind_palace.themes (id),
     FOREIGN KEY (note_type) REFERENCES mind_palace.note_types (id)
 );
+
+CREATE OR REPLACE VIEW v_theme AS SELECT t.id, t.title, t.main_theme_id, u.name as user_name FROM themes t LEFT JOIN users u ON t.user_id = u.id;
