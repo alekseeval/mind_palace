@@ -17,7 +17,7 @@ BEGIN
     end if;
 
     if p_main_theme_id is not null then
-        select id into p_main_theme_id from themes where id=p_main_theme_id;
+        select id into p_main_theme_id from themes where id=p_main_theme_id and user_id=v_user_id;
         if p_main_theme_id is null then
             RAISE EXCEPTION 'no such main theme';
         end if;
