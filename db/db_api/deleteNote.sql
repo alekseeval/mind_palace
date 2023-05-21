@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION mind_palace_api.delete_note (p_id int)
-RETURNS int
+RETURNS void
 LANGUAGE plpgsql
 AS
 $$
@@ -11,7 +11,5 @@ BEGIN
     if r_id is null then
         raise exception 'no note id provided';
     end if;
-
-    RETURN r_id;
 END
 $$;

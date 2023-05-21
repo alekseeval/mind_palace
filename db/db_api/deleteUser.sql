@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION mind_palace_api.delete_user(p_id int)
-RETURNS int
+RETURNS void
 LANGUAGE plpgsql
 AS
 $$
@@ -10,6 +10,5 @@ BEGIN
     if r_id is NULL then
         RAISE EXCEPTION 'No such user';
     end if;
-    RETURN r_id;
 END;
 $$;

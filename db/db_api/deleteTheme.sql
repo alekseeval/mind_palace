@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION mind_palace_api.delete_theme (p_theme_id int)
-RETURNS int
+RETURNS void
 LANGUAGE plpgsql
 AS
 $$
@@ -18,6 +18,5 @@ BEGIN
     if r_id is NULL then
         RAISE EXCEPTION 'no such theme';
     end if;
-    RETURN r_id;
 END;
 $$;
