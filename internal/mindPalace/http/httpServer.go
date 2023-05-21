@@ -40,10 +40,10 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	e.PATCH("/users/:id", httpServer.editUser)
 	e.POST("/users", httpServer.createUser)
 
-	//e.POST("/themes", httpServer.createTheme)
-	//e.GET("/themes", httpServer.getUserThemes)
-	//e.DELETE("/themes/:id", httpServer.deleteTheme)
-	//e.PATCH("/themes/:id", httpServer.editTheme)
+	e.POST("/themes", httpServer.createTheme)
+	e.GET("/themes", httpServer.getUserThemes)
+	e.DELETE("/themes/:id", httpServer.deleteTheme)
+	e.PATCH("/themes/:id", httpServer.editTheme)
 
 	return httpServer
 }
