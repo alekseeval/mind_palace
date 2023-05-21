@@ -16,7 +16,7 @@ type IUserDAO interface {
 
 type IThemeDAO interface {
 	SaveTheme(theme Theme) (*Theme, error)
-	GetAllUserThemes(userName string) ([]*Theme, error)
+	GetAllUserThemes(userName *string) ([]*Theme, error)
 	ChangeTheme(theme *Theme) (*Theme, error)
 	DeleteTheme(themeId int) (int, error)
 }

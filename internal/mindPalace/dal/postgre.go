@@ -90,7 +90,7 @@ func (p *PostgresDB) SaveTheme(theme model.Theme) (*model.Theme, error) {
 	return &theme, nil
 }
 
-func (p *PostgresDB) GetAllUserThemes(userName string) ([]*model.Theme, error) {
+func (p *PostgresDB) GetAllUserThemes(userName *string) ([]*model.Theme, error) {
 	rows, err := p.db.Queryx(`SELECT * FROM get_all_themes_for_user($1)`, userName)
 	if err != nil {
 		return nil, err
