@@ -47,6 +47,8 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	apiV1.DELETE("/themes/:id", httpServer.deleteTheme)
 	apiV1.PATCH("/themes/:id", httpServer.editTheme)
 
+	apiV1.POST("/themes/:theme_id/notes", httpServer.createNote)
+
 	return httpServer
 }
 

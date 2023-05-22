@@ -164,8 +164,24 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 // ---------------------------------------------------------------------------------------------------------------------
 //  Notes API
 // ---------------------------------------------------------------------------------------------------------------------
-// e.POST("/users/:user_id/theme/:theme_id/note")
+// e.POST("/themes/:theme_id/note")
 func (s *HttpServer) createNote(c echo.Context) error {
 
-	return c.NoContent(http.StatusCreated)
+	themeId, err := strconv.Atoi(c.Param("theme_id"))
+	if err != nil {
+		return model.NewServerError(model.InternalServerError, err)
+	}
+	var noteData model.NoteAttributes
+	err = c.Bind(&noteData)
+	if err != nil {
+		return model.NewServerError(model.InternalServerError, err)
+	}
+	note := &model.Note{ThemeId: themeId}
+	note = noteData.UpdateNote(note)
+	note, err = s.storage.SaveNote(*note)
+	if err != nil {
+		return model.NewServerError(model.DbError, err)
+	}
+
+	return c.JSON(http.StatusCreated, note)
 }
