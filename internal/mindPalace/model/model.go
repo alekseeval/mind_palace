@@ -58,3 +58,26 @@ func (tu *ThemeUpdate) UpdateTheme(theme *Theme) *Theme {
 	}
 	return theme
 }
+
+type NoteAttributes struct {
+	Title      *string   `json:"title"`
+	Text       *string   `json:"text"`
+	NoteTypeId *NoteType `json:"note_type"`
+	ThemeId    *int      `json:"theme_id"`
+}
+
+func (nu NoteAttributes) UpdateNote(note *Note) *Note {
+	if nu.Title != nil {
+		note.Title = *nu.Title
+	}
+	if nu.Text != nil {
+		note.Text = nu.Text
+	}
+	if nu.NoteTypeId != nil {
+		note.NoteTypeId = *nu.NoteTypeId
+	}
+	if nu.ThemeId != nil {
+		note.ThemeId = *nu.ThemeId
+	}
+	return note
+}
