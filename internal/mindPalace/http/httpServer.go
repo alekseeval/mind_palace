@@ -33,17 +33,19 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	e.Use(logMiddleware)
 	httpServer.echo = e
 
-	// endpoints
-	e.GET("/users/:id", httpServer.getUser)
-	e.GET("/telegram/users/:tg_id", httpServer.getUserByTgId)
-	e.DELETE("/users/:id", httpServer.deleteUser)
-	e.PATCH("/users/:id", httpServer.editUser)
-	e.POST("/users", httpServer.createUser)
+	apiV1 := e.Group("/api/v1")
 
-	e.POST("/themes", httpServer.createTheme)
-	e.GET("/themes", httpServer.getUserThemes)
-	e.DELETE("/themes/:id", httpServer.deleteTheme)
-	e.PATCH("/themes/:id", httpServer.editTheme)
+	// endpoints API v1
+	apiV1.GET("/users/:id", httpServer.getUser)
+	apiV1.GET("/telegram/users/:tg_id", httpServer.getUserByTgId)
+	apiV1.DELETE("/users/:id", httpServer.deleteUser)
+	apiV1.PATCH("/users/:id", httpServer.editUser)
+	apiV1.POST("/users", httpServer.createUser)
+
+	apiV1.POST("/themes", httpServer.createTheme)
+	apiV1.GET("/themes", httpServer.getUserThemes)
+	apiV1.DELETE("/themes/:id", httpServer.deleteTheme)
+	apiV1.PATCH("/themes/:id", httpServer.editTheme)
 
 	return httpServer
 }
