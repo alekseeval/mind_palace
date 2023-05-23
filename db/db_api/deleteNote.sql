@@ -9,7 +9,7 @@ BEGIN
     DELETE FROM mind_palace.notes WHERE id=p_id RETURNING id INTO r_id;
 
     if r_id is null then
-        raise exception 'no note id provided';
+        raise exception 'no such note';
     end if;
 END
 $$;
