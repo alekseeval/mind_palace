@@ -1,4 +1,4 @@
-CREATE OR REPLACE FUNCTION mind_palace_api.create_note (p_title varchar, p_text varchar, p_note_type int, p_theme_id int, p_user_id int)
+CREATE OR REPLACE FUNCTION mind_palace_api.create_note (p_title varchar, p_text varchar, p_note_type int, p_theme_id int)
 RETURNS int
 LANGUAGE plpgsql
 AS
@@ -6,12 +6,23 @@ $$
 DECLARE
     r_id int;
 BEGIN
-    if NOT exists(SELECT * from mind_palace.users where id = p_user_id) then
-        RAISE EXCEPTION 'user doesnt exists';
+    if p_theme_id is null then
+        RAISE EXCEPTION 'no theme provided';
+    end if;
+    select id into p_theme_id from themes where id=p_theme_id;
+    if p_theme_id is null then
+        Raise exception 'no such theme';
     end if;
 
-    INSERT INTO mind_palace.notes(title, text, note_type, theme_id, user_id)
-    VALUES (p_title, p_text, p_note_type, p_theme_id, p_user_id)
+    if p_title is null then
+        RAISE EXCEPTION 'no title provided';
+    end if;
+    if EXISTS(SELECT * from notes where theme_id=p_theme_id and title=p_title) then
+        RAISE EXCEPTION 'note with title % already exists', p_title;
+    end if;
+
+    INSERT INTO mind_palace.notes(title, text, note_type, theme_id)
+    VALUES (p_title, p_text, p_note_type, p_theme_id)
     RETURNING id INTO r_id;
 
     RETURN r_id;

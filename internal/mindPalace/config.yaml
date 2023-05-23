@@ -1,7 +1,9 @@
 system:
   http:
     host: '0.0.0.0'
-    port: 8080
+    port: 8081
+    read_timeout: 5
+    write_timeout: 5
   grpc:
     port: 10000
   db:
@@ -11,3 +13,6 @@ system:
     password: "mp_admin"
     db_name: 'mind_palace'
     max_conn: 100
+    timeout: 5
+logger:
+  level: trace

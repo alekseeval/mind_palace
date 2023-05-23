@@ -7,13 +7,10 @@ import (
 
 type Config struct {
 	System struct {
-		Http struct {
-			Host string `mapstructure:"host"`
-			Port int    `mapstructure:"port"`
-		}
+		Http HttpConfig `mapstructure:"http"`
 		Grpc struct {
 			Port int `mapstructure:"port"`
-		}
+		} `mapstructure:"grpc"`
 		DB struct {
 			Host     string `mapstructure:"host"`
 			Port     int    `mapstructure:"port"`
@@ -21,8 +18,19 @@ type Config struct {
 			User     string `mapstructure:"user"`
 			Password string `mapstructure:"password"`
 			MaxConn  int    `mapstructure:"max_conn"`
-		}
+			Timeout  int    `mapstructure:"timeout"`
+		} `mapstructure:"db"`
+	} `mapstructure:"system"`
+	Logger struct {
+		Level string `mapstructure:"level"`
 	}
+}
+
+type HttpConfig struct {
+	Host         string `mapstructure:"host"`
+	Port         int    `mapstructure:"port"`
+	ReadTimeout  int    `mapstructure:"read_timeout"`
+	WriteTimeout int    `mapstructure:"write_timeout"`
 }
 
 func ReadConfig(path string) (config *Config, err error) {

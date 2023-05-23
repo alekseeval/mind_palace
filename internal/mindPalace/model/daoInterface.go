@@ -1,28 +1,29 @@
 package model
 
-type DAO interface {
-	UserDAO
-	ThemeDAO
-	NoteDAO
+type IDAO interface {
+	IUserDAO
+	IThemeDAO
+	INoteDAO
 }
 
-type UserDAO interface {
+type IUserDAO interface {
 	SaveUser(user User) (*User, error)
-	GetUserByTgId(telegramIid int64) (*User, error)
+	GetUserByTgId(telegramId int64) (*User, error)
+	GetUserById(userId int) (*User, error)
 	ChangeUser(user *User) (*User, error)
-	DeleteUser(userId int) (int, error)
+	DeleteUser(userId int) error
 }
 
-type ThemeDAO interface {
-	CreateTheme(theme Theme) (*Theme, error)
-	GetAllUserThemes(userId int) ([]*Theme, error)
+type IThemeDAO interface {
+	SaveTheme(theme Theme) (*Theme, error)
+	GetAllUserThemes(userName *string) ([]*Theme, error)
 	ChangeTheme(theme *Theme) (*Theme, error)
-	DeleteTheme(themeId int) (int, error)
+	DeleteTheme(themeId int) error
 }
 
-type NoteDAO interface {
-	CreateNote(note Note) (*Note, error)
-	GetAllUserNotesByTheme(userId int, themeId int) ([]*Note, error)
+type INoteDAO interface {
+	SaveNote(note Note) (*Note, error)
+	GetAllNotesByTheme(themeId int) ([]*Note, error)
 	ChangeNote(note *Note) (*Note, error)
-	DeleteNote(noteId int) (int, error)
+	DeleteNote(noteId int) error
 }
