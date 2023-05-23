@@ -1,10 +1,10 @@
 CREATE OR REPLACE FUNCTION mind_palace_api.change_note (p_id int, p_title varchar, p_text varchar, p_note_type int, p_theme_id int)
-RETURNS int
+RETURNS notes
 LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    r_id int;
+    r_note notes;
 BEGIN
 
     if p_theme_id is null then
@@ -24,12 +24,12 @@ BEGIN
     UPDATE mind_palace.notes
     SET title=p_title, text=p_text, note_type=p_note_type, theme_id=p_theme_id
     WHERE id=p_id
-    RETURNING id INTO r_id;
+    RETURNING * INTO r_note;
 
-    if r_id is null then
+    if r_note is null then
         RAISE EXCEPTION 'no such note';
     end if;
 
-    RETURN r_id;
+    RETURN r_note;
 END
 $$;
