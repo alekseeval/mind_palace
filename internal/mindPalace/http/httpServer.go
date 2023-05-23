@@ -48,6 +48,9 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	apiV1.PATCH("/themes/:id", httpServer.editTheme)
 
 	apiV1.POST("/themes/:theme_id/notes", httpServer.createNote)
+	apiV1.GET("/themes/:theme_id/notes", httpServer.getNotes)
+	apiV1.DELETE("/notes/:note_id", httpServer.deleteNote)
+	apiV1.PATCH("/notes/:note_id", httpServer.editNote)
 
 	return httpServer
 }

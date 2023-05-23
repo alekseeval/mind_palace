@@ -25,7 +25,7 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	return c.JSON(http.StatusCreated, dbUser)
 }
 
-// e.GET("/users/:id")
+// GET("/users/:id")
 func (s *HttpServer) getUser(c echo.Context) error {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -38,7 +38,7 @@ func (s *HttpServer) getUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, user)
 }
 
-// e.GET("/telegram/users/:tg_id")
+// GET("/telegram/users/:tg_id")
 func (s *HttpServer) getUserByTgId(c echo.Context) error {
 	userTgId, err := strconv.ParseInt(c.Param("tg_id"), 10, 64)
 	if err != nil {
@@ -51,7 +51,7 @@ func (s *HttpServer) getUserByTgId(c echo.Context) error {
 	return c.JSON(http.StatusOK, user)
 }
 
-// e.DELETE("/users/:id")
+// DELETE("/users/:id")
 func (s *HttpServer) deleteUser(c echo.Context) error {
 	userId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -64,7 +64,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-// e.PATCH("/users/:id")
+// PATCH("/users/:id")
 func (s *HttpServer) editUser(c echo.Context) error {
 	// read request parameters
 	updatedUserParams := new(model.UserUpdate)
@@ -93,7 +93,7 @@ func (s *HttpServer) editUser(c echo.Context) error {
 // ---------------------------------------------------------------------------------------------------------------------
 //  Themes API
 // ---------------------------------------------------------------------------------------------------------------------
-// e.POST("/themes")
+// POST("/themes")
 func (s *HttpServer) createTheme(c echo.Context) error {
 	themeData := new(model.ThemeUpdate)
 	err := c.Bind(&themeData)
@@ -115,7 +115,7 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 	return c.JSON(http.StatusCreated, theme)
 }
 
-// e.GET("/themes")
+// GET("/themes")
 func (s *HttpServer) getUserThemes(c echo.Context) error {
 	userIdHeader := c.Request().Header["Metadata-User"]
 	var userName *string
@@ -129,7 +129,7 @@ func (s *HttpServer) getUserThemes(c echo.Context) error {
 	return c.JSON(http.StatusOK, userThemes)
 }
 
-// e.DELETE("/themes/:id")
+// DELETE("/themes/:id")
 func (s *HttpServer) deleteTheme(c echo.Context) error {
 	themeId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -142,7 +142,7 @@ func (s *HttpServer) deleteTheme(c echo.Context) error {
 	return c.NoContent(http.StatusOK)
 }
 
-// e.PATCH("/theme/:theme_id")
+// PATCH("/theme/:theme_id")
 func (s *HttpServer) editTheme(c echo.Context) error {
 	themeId, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -164,7 +164,7 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 // ---------------------------------------------------------------------------------------------------------------------
 //  Notes API
 // ---------------------------------------------------------------------------------------------------------------------
-// e.POST("/themes/:theme_id/note")
+// POST("/themes/:theme_id/notes")
 func (s *HttpServer) createNote(c echo.Context) error {
 
 	themeId, err := strconv.Atoi(c.Param("theme_id"))
@@ -184,4 +184,51 @@ func (s *HttpServer) createNote(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, note)
+}
+
+// GET("/themes/:theme_id/notes")
+func (s *HttpServer) getNotes(c echo.Context) error {
+	themeId, err := strconv.Atoi(c.Param("theme_id"))
+	if err != nil {
+		return model.NewServerError(model.InternalServerError, err)
+	}
+	notes, err := s.storage.GetAllNotesByTheme(themeId)
+	if err != nil {
+		return model.NewServerError(model.DbError, err)
+	}
+	return c.JSON(http.StatusOK, notes)
+}
+
+// DELETE("/notes/:note_id")
+func (s *HttpServer) deleteNote(c echo.Context) error {
+	noteId, err := strconv.Atoi(c.Param("note_id"))
+	if err != nil {
+		return model.NewServerError(model.InternalServerError, err)
+	}
+	err = s.storage.DeleteNote(noteId)
+	if err != nil {
+		return model.NewServerError(model.DbError, err)
+	}
+	return c.NoContent(http.StatusNoContent)
+}
+
+// PATCH("/notes/:note_id")
+func (s *HttpServer) editNote(c echo.Context) error {
+	noteId, err := strconv.Atoi(c.Param("note_id"))
+	if err != nil {
+		return model.NewServerError(model.InternalServerError, err)
+	}
+	var noteData model.NoteAttributes
+	err = c.Bind(&noteData)
+	if err != nil {
+		return model.NewServerError(model.InternalServerError, err)
+	}
+	note := new(model.Note)
+	note.Id = noteId
+	note = noteData.UpdateNote(note)
+	note, err = s.storage.ChangeNote(note)
+	if err != nil {
+		return model.NewServerError(model.DbError, err)
+	}
+	return c.JSON(http.StatusOK, note)
 }
