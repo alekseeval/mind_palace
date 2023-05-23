@@ -44,7 +44,7 @@ func (p *PostgresDB) SaveNote(note model.Note) (*model.Note, error) {
 }
 
 func (p *PostgresDB) GetAllNotesByTheme(themeId int) ([]*model.Note, error) {
-	rows, err := p.db.Queryx(`SELECT * FROM get_all_notes_by_theme($2)`, themeId)
+	rows, err := p.db.Queryx(`SELECT * FROM get_all_notes_by_theme($1)`, themeId)
 	if err != nil {
 		return nil, err
 	}
