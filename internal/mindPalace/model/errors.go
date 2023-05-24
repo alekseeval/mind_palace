@@ -2,16 +2,24 @@ package model
 
 const (
 	InternalServerError = 1000
-	DbError             = 1001
-	NoSuchUser          = 1002
-	UserExists          = 1003
-	TgIdInUse           = 1004
-	NoSuchTheme         = 1005
-	ThemeExists         = 1006
-	NoSuchMainTheme     = 1007
+
+	// User error codes
+	UserNameUsed = 1001
+	UserTgIdUsed = 1002
+
+	DbError         = 2001
+	NoSuchUser      = 2002
+	UserExists      = 2003
+	TgIdInUse       = 2004
+	NoSuchTheme     = 2005
+	ThemeExists     = 2006
+	NoSuchMainTheme = 2007
 )
 
 var ErrMap = map[int]string{
+	UserNameUsed: "User with this name already exists",
+	UserTgIdUsed: "User with this tg_id already exists",
+
 	InternalServerError: "Internal server error",
 	DbError:             "DB error",
 	NoSuchUser:          "No such user",
@@ -24,8 +32,8 @@ var ErrMap = map[int]string{
 
 type ServerError struct {
 	Code    int    `json:"code"`
-	Key     string `json:"key,omitempty"`
 	Message string `json:"msg,omitempty"`
+	Detail  string `json:"detail,omitempty"`
 }
 
 func NewServerError(code int, err error) *ServerError {
@@ -34,11 +42,11 @@ func NewServerError(code int, err error) *ServerError {
 		Message: ErrMap[code],
 	}
 	if err != nil {
-		he.Key = err.Error()
+		he.Detail = err.Error()
 	}
 	return he
 }
 
 func (e *ServerError) Error() string {
-	return e.Key + ": " + e.Message
+	return e.Detail + ": " + e.Message
 }

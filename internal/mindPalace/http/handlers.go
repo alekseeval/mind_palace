@@ -20,7 +20,7 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	user := userData.UpdateUser(&model.User{})
 	dbUser, err := s.storage.SaveUser(*user)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusCreated, dbUser)
 }
