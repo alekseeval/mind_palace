@@ -8,5 +8,5 @@ r_id int;
 BEGIN
     INSERT INTO mind_palace.users(name, tg_id) VALUES (p_name, p_tg_id) RETURNING id INTO r_id;
     RETURN r_id;
-END;
+END
 $$;
