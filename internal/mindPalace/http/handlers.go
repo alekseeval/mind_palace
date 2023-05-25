@@ -59,7 +59,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 	}
 	err = s.storage.DeleteUser(userId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.NoContent(http.StatusOK)
 }
