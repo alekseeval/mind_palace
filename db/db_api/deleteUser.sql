@@ -8,7 +8,7 @@ DECLARE
 BEGIN
     DELETE FROM mind_palace.users WHERE id=p_id RETURNING id INTO r_id;
     if r_id is NULL then
-        RAISE EXCEPTION 'No such user';
+        RAISE SQLSTATE '80002' USING MESSAGE = 'No such user';
     end if;
-END;
+END
 $$;
