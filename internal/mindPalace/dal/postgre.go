@@ -123,13 +123,12 @@ func (p *PostgresDB) DeleteTheme(themeId int) error {
 
 func (p *PostgresDB) SaveUser(user model.User) (*model.User, error) {
 	row := p.db.QueryRow(`SELECT * FROM create_user($1, $2)`, user.Name, user.TelegramId)
-	var id int
-	err := row.Scan(&id)
+	var dbUser model.User
+	err := row.Scan(&dbUser)
 	if err != nil {
 		return nil, err
 	}
-	user.Id = id
-	return &user, nil
+	return &dbUser, nil
 }
 
 func (p *PostgresDB) GetUserByTgId(telegramId int64) (*model.User, error) {
