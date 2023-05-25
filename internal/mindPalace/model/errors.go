@@ -4,8 +4,9 @@ const (
 	InternalServerError = 1000
 
 	// User error codes
-	UserNameUsed = 1001
-	UserTgIdUsed = 1002
+	UserNameUsed    = 1001
+	UserTgIdUsed    = 1002
+	UserNameTooLong = 1003
 
 	DbError         = 2001
 	NoSuchUser      = 2002
@@ -17,8 +18,9 @@ const (
 )
 
 var ErrMap = map[int]string{
-	UserNameUsed: "User with this name already exists",
-	UserTgIdUsed: "User with this tg_id already exists",
+	UserNameUsed:    "User with this name already exists",
+	UserTgIdUsed:    "User with this tg_id already exists",
+	UserNameTooLong: "User name should be at most 50 characters",
 
 	InternalServerError: "Internal server error",
 	DbError:             "DB error",
