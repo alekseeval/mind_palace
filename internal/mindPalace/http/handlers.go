@@ -15,7 +15,7 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	userData := new(model.UserUpdate)
 	err := c.Bind(&userData)
 	if err != nil {
-		return err
+		return model.NewServerError(model.WrongRequestParameters, err)
 	}
 	user := userData.UpdateUser(&model.User{})
 	dbUser, err := s.storage.SaveUser(*user)
