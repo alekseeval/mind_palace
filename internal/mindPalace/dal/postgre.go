@@ -122,9 +122,9 @@ func (p *PostgresDB) DeleteTheme(themeId int) error {
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) SaveUser(user model.User) (*model.User, error) {
-	row := p.db.QueryRow(`SELECT * FROM create_user($1, $2)`, user.Name, user.TelegramId)
+	row := p.db.QueryRowx(`SELECT * FROM create_user($1, $2)`, user.Name, user.TelegramId)
 	var dbUser model.User
-	err := row.Scan(&dbUser)
+	err := row.StructScan(&dbUser)
 	if err != nil {
 		return nil, err
 	}
