@@ -1,30 +1,34 @@
 package model
 
 const (
-	InternalServerError = 1000
+	// Internal errors
+	InternalServerError    = 1000
+	WrongRequestParameters = 1001
 
 	// User error codes
-	UserNameUsed    = 1001
-	UserTgIdUsed    = 1002
-	UserNameTooLong = 1003
+	UserNameUsed    = 2001
+	UserTgIdUsed    = 2002
+	UserNameTooLong = 2003
+	NoSuchUser      = 2004
 
-	DbError         = 2001
-	NoSuchUser      = 2002
-	UserExists      = 2003
-	TgIdInUse       = 2004
-	NoSuchTheme     = 2005
-	ThemeExists     = 2006
-	NoSuchMainTheme = 2007
+	DbError         = 3001
+	UserExists      = 3003
+	TgIdInUse       = 3004
+	NoSuchTheme     = 3005
+	ThemeExists     = 3006
+	NoSuchMainTheme = 3007
 )
 
 var ErrMap = map[int]string{
+	WrongRequestParameters: "Wrong request parameters",
+
 	UserNameUsed:    "User with this name already exists",
 	UserTgIdUsed:    "User with this tg_id already exists",
 	UserNameTooLong: "User name should be at most 50 characters",
+	NoSuchUser:      "No such user",
 
 	InternalServerError: "Internal server error",
 	DbError:             "DB error",
-	NoSuchUser:          "No such user",
 	UserExists:          "User already exists",
 	TgIdInUse:           "Telegram id is used by other user",
 	NoSuchTheme:         "No such theme",
