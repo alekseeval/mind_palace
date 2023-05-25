@@ -61,6 +61,9 @@ func MapDBError(dbErr *pq.Error) *model.ServerError {
 	case "80001":
 		serverError = model.NewServerError(model.UserNameTooLong, dbErr)
 		return serverError
+	case "80002":
+		serverError = model.NewServerError(model.NoSuchUser, dbErr)
+		return serverError
 	}
 	return model.NewServerError(model.DbError, dbErr)
 }
