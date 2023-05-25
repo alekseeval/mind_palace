@@ -14,41 +14,53 @@ func logMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
-func customHTTPErrorHandler(err error, c echo.Context) {
+func customHTTPErrorHandler(returnedErr error, c echo.Context) {
 	if c.Response().Committed {
+		log.Error("Response was already committed when starting to handle error")
 		return
 	}
 
 	// Catch db errors
-	if dbErr, ok := err.(*pq.Error); ok {
-		if dbErr.Code == "23505" {
-			switch dbErr.Constraint {
-			case "users_name_key":
-				err = c.JSON(http.StatusInternalServerError, model.NewServerError(model.UserNameUsed, dbErr))
-				if err != nil {
-					log.Error(err)
-				}
-				return
-			case "users_tg_id_key":
-				err = c.JSON(http.StatusInternalServerError, model.NewServerError(model.UserTgIdUsed, dbErr))
-				if err != nil {
-					log.Error(err)
-				}
-				return
-			}
+	if dbErr, ok := returnedErr.(*pq.Error); ok {
+		serverErr := MapDBError(dbErr)
+		err := c.JSON(http.StatusInternalServerError, serverErr)
+		if err != nil {
+			log.Error("Error occurred when return HTTP error")
 		}
+		return
 	}
 
-	he, ok := err.(*model.ServerError)
+	// Catch error which already are a model.ServerError
+	he, ok := returnedErr.(*model.ServerError)
 	if ok {
-		err = c.JSON(http.StatusInternalServerError, he)
+		err := c.JSON(http.StatusInternalServerError, he)
 		if err != nil {
 			log.Error(err)
 		}
-	} else {
-		err = c.JSON(http.StatusInternalServerError, model.NewServerError(model.InternalServerError, err))
+	} else { // When unexpected error occurred
+		err := c.JSON(http.StatusInternalServerError, model.NewServerError(model.InternalServerError, returnedErr))
 		if err != nil {
 			log.Error(err)
 		}
 	}
+}
+
+func MapDBError(dbErr *pq.Error) *model.ServerError {
+	var serverError *model.ServerError
+	if dbErr.Code == "23505" { // unique constrain DB error
+		switch dbErr.Constraint {
+		case "users_name_key":
+			serverError = model.NewServerError(model.UserNameUsed, dbErr)
+			return serverError
+		case "users_tg_id_key":
+			serverError = model.NewServerError(model.UserTgIdUsed, dbErr)
+			return serverError
+		}
+	}
+	switch dbErr.Code {
+	case "80001":
+		serverError = model.NewServerError(model.UserNameTooLong, dbErr)
+		return serverError
+	}
+	return model.NewServerError(model.DbError, dbErr)
 }
