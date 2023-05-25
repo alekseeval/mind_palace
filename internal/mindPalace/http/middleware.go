@@ -51,19 +51,20 @@ func MapDBError(dbErr *pq.Error) *model.ServerError {
 		switch dbErr.Constraint {
 		case "users_name_key":
 			serverError = model.NewServerError(model.UserNameUsed, dbErr)
-			return serverError
 		case "users_tg_id_key":
 			serverError = model.NewServerError(model.UserTgIdUsed, dbErr)
-			return serverError
 		}
 	}
-	switch dbErr.Code {
+
+	switch dbErr.Code { // Own codes
 	case "80001":
 		serverError = model.NewServerError(model.UserNameTooLong, dbErr)
-		return serverError
 	case "80002":
 		serverError = model.NewServerError(model.NoSuchUser, dbErr)
-		return serverError
 	}
-	return model.NewServerError(model.DbError, dbErr)
+
+	if serverError == nil { // Unexpected DB error
+		serverError = model.NewServerError(model.DbError, dbErr)
+	}
+	return serverError
 }
