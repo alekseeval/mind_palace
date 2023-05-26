@@ -77,15 +77,14 @@ func (p *PostgresDB) DeleteNote(noteId int) error {
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) SaveTheme(theme model.Theme) (*model.Theme, error) {
-	row := p.db.QueryRow(`SELECT * FROM create_theme($1, $2, $3)`,
+	row := p.db.QueryRowx(`SELECT * FROM create_theme($1, $2, $3)`,
 		theme.Title, theme.MainThemeId, theme.UserName)
-	var id int
-	err := row.Scan(&id)
+	var dbTheme model.Theme
+	err := row.StructScan(&dbTheme)
 	if err != nil {
 		return nil, err
 	}
-	theme.Id = id
-	return &theme, nil
+	return &dbTheme, nil
 }
 
 func (p *PostgresDB) GetAllUserThemes(userName *string) ([]*model.Theme, error) {
