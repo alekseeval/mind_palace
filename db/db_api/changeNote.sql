@@ -5,30 +5,24 @@ AS
 $$
 DECLARE
     r_note notes;
+    v_theme_id int;
+    v_title varchar;
 BEGIN
-
-    if p_theme_id is null then
-        RAISE EXCEPTION 'no theme provided';
+    select theme_id, title into v_theme_id, v_title from notes where id=p_id;
+    if v_theme_id is null then
+        RAISE EXCEPTION 'no such note';
     end if;
-    if not exists(SELECT * from themes where id=p_theme_id) then
+
+    if not exists(SELECT * from themes where id=v_theme_id) then
         raise exception 'no such theme';
     end if;
 
-    if p_title is null then
-        raise exception 'no title provided';
-    end if;
-    if exists(SELECT * from notes where theme_id=p_theme_id and title=p_title) then
-        raise exception 'note with title % already exists', p_title;
-    end if;
-
-    UPDATE mind_palace.notes
-    SET title=p_title, text=p_text, note_type=p_note_type, theme_id=p_theme_id
-    WHERE id=p_id
-    RETURNING * INTO r_note;
-
-    if r_note is null then
-        RAISE EXCEPTION 'no such note';
-    end if;
+    UPDATE mind_palace.notes SET
+                                 title=coalesce(p_title, title),
+                                 text=coalesce(p_text, text),
+                                 note_type=coalesce(p_note_type, note_type),
+                                 theme_id=coalesce(p_theme_id, theme_id)
+    WHERE id=p_id RETURNING * INTO r_note;
 
     RETURN r_note;
 END

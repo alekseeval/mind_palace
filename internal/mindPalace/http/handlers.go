@@ -176,7 +176,8 @@ func (s *HttpServer) createNote(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
 	}
-	note := &model.Note{ThemeId: themeId}
+	note := new(model.Note)
+	note.ThemeId = &themeId
 	note = noteData.UpdateNote(note)
 	note, err = s.storage.SaveNote(*note)
 	if err != nil {
@@ -230,5 +231,6 @@ func (s *HttpServer) editNote(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.DbError, err)
 	}
+
 	return c.JSON(http.StatusOK, note)
 }

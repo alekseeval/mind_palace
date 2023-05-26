@@ -24,11 +24,11 @@ type Theme struct {
 }
 
 type Note struct {
-	Id         int      `db:"id" json:"id"`
-	Title      string   `db:"title" json:"title"`
-	Text       *string  `db:"text" json:"text"`
-	NoteTypeId NoteType `db:"note_type" json:"note_type"`
-	ThemeId    int      `db:"theme_id" json:"theme_id"`
+	Id         int       `db:"id" json:"id"`
+	Title      *string   `db:"title" json:"title"`
+	Text       *string   `db:"text" json:"text"`
+	NoteTypeId *NoteType `db:"note_type" json:"note_type"`
+	ThemeId    *int      `db:"theme_id" json:"theme_id"`
 }
 
 type UserUpdate struct {
@@ -68,16 +68,16 @@ type NoteAttributes struct {
 
 func (nu NoteAttributes) UpdateNote(note *Note) *Note {
 	if nu.Title != nil {
-		note.Title = *nu.Title
+		note.Title = nu.Title
 	}
 	if nu.Text != nil {
 		note.Text = nu.Text
 	}
 	if nu.NoteTypeId != nil {
-		note.NoteTypeId = *nu.NoteTypeId
+		note.NoteTypeId = nu.NoteTypeId
 	}
 	if nu.ThemeId != nil {
-		note.ThemeId = *nu.ThemeId
+		note.ThemeId = nu.ThemeId
 	}
 	return note
 }

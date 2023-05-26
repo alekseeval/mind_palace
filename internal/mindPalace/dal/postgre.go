@@ -61,7 +61,7 @@ func (p *PostgresDB) GetAllNotesByTheme(themeId int) ([]*model.Note, error) {
 
 func (p *PostgresDB) ChangeNote(note *model.Note) (*model.Note, error) {
 	row := p.db.QueryRowx(`SELECT * FROM change_note($1, $2, $3, $4, $5)`,
-		note.Id, note.Title, note.Title, note.NoteTypeId, note.ThemeId)
+		note.Id, note.Title, note.Text, note.NoteTypeId, note.ThemeId)
 	err := row.StructScan(note)
 	return note, err
 }
