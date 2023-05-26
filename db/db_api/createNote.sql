@@ -1,10 +1,10 @@
 CREATE OR REPLACE FUNCTION mind_palace_api.create_note (p_title varchar, p_text varchar, p_note_type int, p_theme_id int)
-RETURNS int
+RETURNS themes
 LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    r_id int;
+    r_theme int;
 BEGIN
     if p_theme_id is null then
         RAISE EXCEPTION 'no theme provided';
@@ -23,8 +23,8 @@ BEGIN
 
     INSERT INTO mind_palace.notes(title, text, note_type, theme_id)
     VALUES (p_title, p_text, p_note_type, p_theme_id)
-    RETURNING id INTO r_id;
+    RETURNING * INTO r_theme;
 
-    RETURN r_id;
+    RETURN r_theme;
 END
 $$;

@@ -32,15 +32,14 @@ func NewPostgresDB(config *configuration.Config) (*PostgresDB, error) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) SaveNote(note model.Note) (*model.Note, error) {
-	row := p.db.QueryRow(`SELECT * FROM create_note($1, $2, $3, $4)`,
+	row := p.db.QueryRowx(`SELECT * FROM create_note($1, $2, $3, $4)`,
 		note.Title, note.Text, note.NoteTypeId, note.ThemeId)
-	var id int
-	err := row.Scan(&id)
+	var dbNote model.Note
+	err := row.StructScan(&dbNote)
 	if err != nil {
 		return nil, err
 	}
-	note.Id = id
-	return &note, nil
+	return &dbNote, nil
 }
 
 func (p *PostgresDB) GetAllNotesByTheme(themeId int) ([]*model.Note, error) {
