@@ -107,7 +107,7 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 	} else {
 		userName = model.SystemUser
 	}
-	theme := themeData.UpdateTheme(&model.Theme{UserName: userName})
+	theme := themeData.UpdateTheme(&model.Theme{UserName: &userName})
 	theme, err = s.storage.SaveTheme(*theme)
 	if err != nil {
 		return model.NewServerError(model.DbError, err)

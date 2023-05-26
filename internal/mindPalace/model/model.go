@@ -17,10 +17,10 @@ type User struct {
 }
 
 type Theme struct {
-	Id          int    `db:"id" json:"id"`
-	Title       string `db:"title" json:"title"`
-	MainThemeId *int   `db:"main_theme_id" json:"main_theme_id"`
-	UserName    string `db:"user_name" json:"user"`
+	Id          int     `db:"id" json:"id"`
+	Title       *string `db:"title" json:"title"`
+	MainThemeId *int    `db:"main_theme_id" json:"main_theme_id"`
+	UserName    *string `db:"user_name" json:"user"`
 }
 
 type Note struct {
@@ -51,7 +51,7 @@ type ThemeUpdate struct {
 
 func (tu *ThemeUpdate) UpdateTheme(theme *Theme) *Theme {
 	if tu.Title != nil {
-		theme.Title = *tu.Title
+		theme.Title = tu.Title
 	}
 	if tu.MainThemeId != nil {
 		theme.MainThemeId = tu.MainThemeId
