@@ -1,10 +1,10 @@
 CREATE OR REPLACE FUNCTION mind_palace_api.change_theme (p_theme_id int, p_title varchar, p_main_theme_id int)
-RETURNS mind_palace.v_theme
+RETURNS v_theme
 LANGUAGE plpgsql
 AS
 $$
 DECLARE
-    changed_theme mind_palace.v_theme;
+    changed_theme v_theme;
     changed_theme_id int;
 BEGIN
     if p_theme_id is NULL then
@@ -18,7 +18,7 @@ BEGIN
         end if;
     end if;
 
-    UPDATE mind_palace.themes
+    UPDATE themes
     SET title=p_title, main_theme_id=p_main_theme_id
     WHERE id=p_theme_id
     RETURNING id INTO changed_theme_id;
