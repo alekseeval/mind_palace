@@ -6,8 +6,9 @@ $$
 DECLARE
     cur_user mind_palace.users;
 BEGIN
-    UPDATE mind_palace.users
-    SET tg_id=p_tg_id, name=p_name
+    UPDATE mind_palace.users SET
+        tg_id=COALESCE(p_tg_id, tg_id),
+        name=COALESCE(p_name, name)
     WHERE id=p_id
     RETURNING * INTO cur_user;
 

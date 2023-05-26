@@ -11,9 +11,9 @@ const (
 )
 
 type User struct {
-	Id         int    `db:"id" json:"id"`
-	Name       string `db:"name" json:"name"`
-	TelegramId *int64 `db:"tg_id" json:"tg_id"`
+	Id         int     `db:"id" json:"id"`
+	Name       *string `db:"name" json:"name"`
+	TelegramId *int64  `db:"tg_id" json:"tg_id"`
 }
 
 type Theme struct {
@@ -32,8 +32,8 @@ type Note struct {
 }
 
 type UserUpdate struct {
-	Name       string `json:"name"`
-	TelegramId *int64 `json:"tg_id"`
+	Name       *string `json:"name"`
+	TelegramId *int64  `json:"tg_id"`
 }
 
 func (u *UserUpdate) UpdateUser(user *User) *User {
