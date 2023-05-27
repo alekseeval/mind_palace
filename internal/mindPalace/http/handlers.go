@@ -90,6 +90,14 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	return c.JSON(http.StatusOK, dbUser)
 }
 
+func (s *HttpServer) getAllUsers(c echo.Context) error {
+	users, err := s.storage.GetAllUsers()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, users)
+}
+
 // ---------------------------------------------------------------------------------------------------------------------
 //  Themes API
 // ---------------------------------------------------------------------------------------------------------------------
