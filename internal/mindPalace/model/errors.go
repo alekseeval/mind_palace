@@ -1,26 +1,28 @@
 package model
 
+// Internal errors
 const (
-	// Internal errors
-	InternalServerError    = 1000
-	WrongRequestParameters = 1001
-	DbError                = 1002
+	InternalServerError = iota + 1000
+	WrongRequestParameters
+	DbError
+)
 
+const (
 	// User error codes
-	UserNameUsed        = 2001
-	UserTgIdUsed        = 2002
-	UserNameTooLong     = 2003
-	NoSuchUser          = 2004
-	UserThemeLinkExists = 2005
+	UserNameUsed = iota + 2000
+	UserTgIdUsed
+	UserNameTooLong
+	NoSuchUser
+	UserThemeLinkExists
 
 	// Theme error codes
-	ThemeExists           = 2006
-	NoSuchMainTheme       = 2007
-	MainThemeUserMismatch = 2008
-	ThemeMainItself       = 2009
-	NoteThemeLinkExists   = 2010
-	ThemeHaveSubThemes    = 2011
-	NoSuchTheme           = 2012
+	ThemeExists
+	NoSuchMainTheme
+	MainThemeUserMismatch
+	ThemeMainItself
+	NoteThemeLinkExists
+	ThemeHaveSubThemes
+	NoSuchTheme
 )
 
 var ErrMap = map[int]string{
