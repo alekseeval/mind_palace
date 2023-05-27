@@ -162,3 +162,13 @@ func (p *PostgresDB) DeleteUser(userId int) error {
 	_, err := p.db.Exec(`SELECT * FROM delete_user($1)`, userId)
 	return err
 }
+
+func (p *PostgresDB) GetAllUsers() ([]*model.User, error) {
+	rows := p.db.QueryRowx(`SELECT * FROM get_users()`)
+	var users []*model.User
+	err := rows.StructScan(&users)
+	if err != nil {
+		return nil, err
+	}
+	return users, nil
+}
