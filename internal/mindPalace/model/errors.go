@@ -10,6 +10,7 @@ const (
 	UserTgIdUsed    = 2002
 	UserNameTooLong = 2003
 	NoSuchUser      = 2004
+	UserThemeExists = 2005
 
 	DbError         = 3001
 	UserExists      = 3003
@@ -26,6 +27,7 @@ var ErrMap = map[int]string{
 	UserTgIdUsed:    "User with this tg_id already exists",
 	UserNameTooLong: "User name should be at most 50 characters",
 	NoSuchUser:      "No such user",
+	UserThemeExists: "For user exists non deleted theme",
 
 	InternalServerError: "Internal server error",
 	DbError:             "DB error",
