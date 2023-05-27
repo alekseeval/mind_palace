@@ -4,6 +4,7 @@ const (
 	// Internal errors
 	InternalServerError    = 1000
 	WrongRequestParameters = 1001
+	DbError                = 1002
 
 	// User error codes
 	UserNameUsed        = 2001
@@ -20,10 +21,6 @@ const (
 	NoteThemeLinkExists   = 2010
 	ThemeHaveSubThemes    = 2011
 	NoSuchTheme           = 2012
-
-	DbError    = 3001
-	UserExists = 3003
-	TgIdInUse  = 3004
 )
 
 var ErrMap = map[int]string{
@@ -47,8 +44,6 @@ var ErrMap = map[int]string{
 
 	InternalServerError: "Internal server error",
 	DbError:             "DB error",
-	UserExists:          "User already exists",
-	TgIdInUse:           "Telegram id is used by other user",
 }
 
 type ServerError struct {
