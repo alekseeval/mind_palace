@@ -164,11 +164,17 @@ func (p *PostgresDB) DeleteUser(userId int) error {
 }
 
 func (p *PostgresDB) GetAllUsers() ([]*model.User, error) {
-	rows := p.db.QueryRowx(`SELECT * FROM get_users()`)
-	var users []*model.User
-	err := rows.StructScan(&users)
+	rows, err := p.db.Queryx(`SELECT * FROM get_users()`)
 	if err != nil {
 		return nil, err
+	}
+	users := make([]*model.User, 0)
+	for rows.Next() {
+		var u model.User
+		if err = rows.StructScan(&u); err != nil {
+			return nil, err
+		}
+		users = append(users, &u)
 	}
 	return users, nil
 }
