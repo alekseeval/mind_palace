@@ -13,7 +13,7 @@ BEGIN
     RETURNING * INTO cur_user;
 
     if cur_user is NULL then
-        RAISE EXCEPTION 'No such user';
+        RAISE SQLSTATE '80002' USING message = 'no such user';
     end if;
 
     RETURN cur_user;
