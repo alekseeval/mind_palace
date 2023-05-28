@@ -10,11 +10,15 @@ DECLARE
 BEGIN
     select theme_id, title into v_theme_id, v_title from notes where id=p_id;
     if v_theme_id is null then
-        RAISE EXCEPTION 'no such note';
+        RAISE SQLSTATE '80013' USING message = 'no such note';
     end if;
 
-    if not exists(SELECT * from themes where id=v_theme_id) then
-        raise exception 'no such theme';
+    if p_theme_id is not NULL AND not exists(SELECT * from themes where id=p_theme_id) then
+        RAISE SQLSTATE '80007' USING message = 'no such theme';
+    end if;
+
+    if p_note_type is not null AND not EXISTS(SELECT * from note_types where id=p_note_type) then
+        RAISE SQLSTATE '80011' USING message = 'wrong note type provided';
     end if;
 
     UPDATE mind_palace.notes SET

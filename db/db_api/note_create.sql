@@ -7,18 +7,19 @@ DECLARE
     r_note notes;
 BEGIN
     if p_theme_id is null then
-        RAISE EXCEPTION 'no theme provided';
+        RAISE SQLSTATE '80008' USING message = 'no theme provided to function';
     end if;
-    select id into p_theme_id from themes where id=p_theme_id;
-    if p_theme_id is null then
-        Raise exception 'no such theme';
+    if not EXISTS(select id from themes where id=p_theme_id) then
+        RAISE SQLSTATE '80007' USING message = 'no such theme exists';
     end if;
-
     if p_title is null then
-        RAISE EXCEPTION 'no title provided';
+        RAISE SQLSTATE '80009' USING message = 'empty title provided for create note';
     end if;
-    if EXISTS(SELECT * from notes where theme_id=p_theme_id and title=p_title) then
-        RAISE EXCEPTION 'note with title % already exists', p_title;
+    if p_text is null then
+        RAISE SQLSTATE '80012' USING message = 'empty text provided for create note';
+    end if;
+    if not EXISTS(SELECT * from note_types where id=p_note_type) then
+        RAISE SQLSTATE '80011' USING message = 'wrong note type provided';
     end if;
 
     INSERT INTO notes(title, text, note_type, theme_id)

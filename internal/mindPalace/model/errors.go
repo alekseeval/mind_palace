@@ -23,6 +23,13 @@ const (
 	NoteThemeLinkExists
 	ThemeHaveSubThemes
 	NoSuchTheme
+
+	// Note error codes
+	NoteNoThemeProvided
+	NoteNoTitleProvided
+	NoteNoTextProvided
+	NoSuchNote
+	InvalidNoteType
 )
 
 var ErrMap = map[int]string{
@@ -43,6 +50,13 @@ var ErrMap = map[int]string{
 	ThemeMainItself:       "Theme cant be main for itself",
 	ThemeHaveSubThemes:    "Theme have sub themes",
 	NoSuchTheme:           "No such theme",
+
+	// Notes
+	NoteNoThemeProvided: "Note must be linked to theme",
+	NoteNoTitleProvided: "Note must have the Title",
+	NoteNoTextProvided:  "Note must have the Text",
+	NoSuchNote:          "No such note",
+	InvalidNoteType:     "Invalid note type provided",
 
 	InternalServerError: "Internal server error",
 	DbError:             "DB error",

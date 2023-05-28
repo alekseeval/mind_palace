@@ -45,6 +45,16 @@ func MapDBError(dbErr *pq.Error) *model.ServerError {
 		serverError = model.NewServerError(model.ThemeHaveSubThemes, dbErr)
 	case "80007":
 		serverError = model.NewServerError(model.NoSuchTheme, dbErr)
+	case "80008":
+		serverError = model.NewServerError(model.NoteNoThemeProvided, dbErr)
+	case "80009":
+		serverError = model.NewServerError(model.NoteNoTitleProvided, dbErr)
+	case "80011":
+		serverError = model.NewServerError(model.InvalidNoteType, dbErr)
+	case "80012":
+		serverError = model.NewServerError(model.NoteNoTextProvided, dbErr)
+	case "80013":
+		serverError = model.NewServerError(model.NoSuchNote, dbErr)
 	}
 
 	if serverError == nil { // Unexpected DB error
