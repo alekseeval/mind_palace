@@ -41,6 +41,7 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	apiV1.DELETE("/users/:id", httpServer.deleteUser)
 	apiV1.PATCH("/users/:id", httpServer.editUser)
 	apiV1.POST("/users", httpServer.createUser)
+	apiV1.GET("/users", httpServer.getAllUsers)
 
 	apiV1.POST("/themes", httpServer.createTheme)
 	apiV1.GET("/themes", httpServer.getUserThemes)

@@ -7,9 +7,8 @@ DECLARE
     r_id int;
 BEGIN
     DELETE FROM mind_palace.notes WHERE id=p_id RETURNING id INTO r_id;
-
     if r_id is null then
-        raise exception 'no such note';
+        RAISE SQLSTATE '80013' USING message = 'no such note';
     end if;
 END
 $$;

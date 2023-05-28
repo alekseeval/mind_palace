@@ -15,12 +15,12 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	userData := new(model.UserUpdate)
 	err := c.Bind(&userData)
 	if err != nil {
-		return err
+		return model.NewServerError(model.WrongRequestParameters, err)
 	}
 	user := userData.UpdateUser(&model.User{})
 	dbUser, err := s.storage.SaveUser(*user)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusCreated, dbUser)
 }
@@ -33,7 +33,7 @@ func (s *HttpServer) getUser(c echo.Context) error {
 	}
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -46,7 +46,7 @@ func (s *HttpServer) getUserByTgId(c echo.Context) error {
 	}
 	user, err := s.storage.GetUserByTgId(userTgId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusOK, user)
 }
@@ -59,7 +59,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 	}
 	err = s.storage.DeleteUser(userId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.NoContent(http.StatusOK)
 }
@@ -80,14 +80,22 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	// update user in db
 	user, err := s.storage.GetUserById(userId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	user = updatedUserParams.UpdateUser(user)
 	dbUser, err := s.storage.ChangeUser(user)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusOK, dbUser)
+}
+
+func (s *HttpServer) getAllUsers(c echo.Context) error {
+	users, err := s.storage.GetAllUsers()
+	if err != nil {
+		return err
+	}
+	return c.JSON(http.StatusOK, users)
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -107,10 +115,10 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 	} else {
 		userName = model.SystemUser
 	}
-	theme := themeData.UpdateTheme(&model.Theme{UserName: userName})
+	theme := themeData.UpdateTheme(&model.Theme{UserName: &userName})
 	theme, err = s.storage.SaveTheme(*theme)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusCreated, theme)
 }
@@ -124,7 +132,7 @@ func (s *HttpServer) getUserThemes(c echo.Context) error {
 	}
 	userThemes, err := s.storage.GetAllUserThemes(userName)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusOK, userThemes)
 }
@@ -137,7 +145,7 @@ func (s *HttpServer) deleteTheme(c echo.Context) error {
 	}
 	err = s.storage.DeleteTheme(themeId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.NoContent(http.StatusOK)
 }
@@ -156,7 +164,7 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 	theme := themeData.UpdateTheme(&model.Theme{Id: themeId})
 	theme, err = s.storage.ChangeTheme(theme)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusOK, theme)
 }
@@ -176,11 +184,12 @@ func (s *HttpServer) createNote(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
 	}
-	note := &model.Note{ThemeId: themeId}
+	note := new(model.Note)
+	note.ThemeId = &themeId
 	note = noteData.UpdateNote(note)
 	note, err = s.storage.SaveNote(*note)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 
 	return c.JSON(http.StatusCreated, note)
@@ -194,7 +203,7 @@ func (s *HttpServer) getNotes(c echo.Context) error {
 	}
 	notes, err := s.storage.GetAllNotesByTheme(themeId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.JSON(http.StatusOK, notes)
 }
@@ -207,7 +216,7 @@ func (s *HttpServer) deleteNote(c echo.Context) error {
 	}
 	err = s.storage.DeleteNote(noteId)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
 	return c.NoContent(http.StatusNoContent)
 }
@@ -228,7 +237,8 @@ func (s *HttpServer) editNote(c echo.Context) error {
 	note = noteData.UpdateNote(note)
 	note, err = s.storage.ChangeNote(note)
 	if err != nil {
-		return model.NewServerError(model.DbError, err)
+		return err
 	}
+
 	return c.JSON(http.StatusOK, note)
 }

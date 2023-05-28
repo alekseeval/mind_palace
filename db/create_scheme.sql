@@ -5,7 +5,7 @@ ALTER ROLE CURRENT_ROLE SET SEARCH_PATH to mind_palace, mind_palace_api;
 
 CREATE TABLE if not exists mind_palace.users (
     id serial PRIMARY KEY,
-    name VARCHAR unique,
+    name VARCHAR(30) unique,
     tg_id bigint unique
 );
 
@@ -29,7 +29,7 @@ CREATE TABLE if not exists mind_palace.note_types (
 
 CREATE TABLE if not exists mind_palace.notes (
     id serial PRIMARY KEY,
-    title VARCHAR NOT NULL UNIQUE ,
+    title VARCHAR NOT NULL,
     text VARCHAR NOT NULL,
     note_type int NOT NULL,
     theme_id int NOT NULL,

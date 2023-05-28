@@ -32,15 +32,14 @@ func NewPostgresDB(config *configuration.Config) (*PostgresDB, error) {
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) SaveNote(note model.Note) (*model.Note, error) {
-	row := p.db.QueryRow(`SELECT * FROM create_note($1, $2, $3, $4)`,
+	row := p.db.QueryRowx(`SELECT * FROM create_note($1, $2, $3, $4)`,
 		note.Title, note.Text, note.NoteTypeId, note.ThemeId)
-	var id int
-	err := row.Scan(&id)
+	var dbNote model.Note
+	err := row.StructScan(&dbNote)
 	if err != nil {
 		return nil, err
 	}
-	note.Id = id
-	return &note, nil
+	return &dbNote, nil
 }
 
 func (p *PostgresDB) GetAllNotesByTheme(themeId int) ([]*model.Note, error) {
@@ -62,7 +61,7 @@ func (p *PostgresDB) GetAllNotesByTheme(themeId int) ([]*model.Note, error) {
 
 func (p *PostgresDB) ChangeNote(note *model.Note) (*model.Note, error) {
 	row := p.db.QueryRowx(`SELECT * FROM change_note($1, $2, $3, $4, $5)`,
-		note.Id, note.Title, note.Title, note.NoteTypeId, note.ThemeId)
+		note.Id, note.Title, note.Text, note.NoteTypeId, note.ThemeId)
 	err := row.StructScan(note)
 	return note, err
 }
@@ -77,15 +76,14 @@ func (p *PostgresDB) DeleteNote(noteId int) error {
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) SaveTheme(theme model.Theme) (*model.Theme, error) {
-	row := p.db.QueryRow(`SELECT * FROM create_theme($1, $2, $3)`,
+	row := p.db.QueryRowx(`SELECT * FROM create_theme($1, $2, $3)`,
 		theme.Title, theme.MainThemeId, theme.UserName)
-	var id int
-	err := row.Scan(&id)
+	var dbTheme model.Theme
+	err := row.StructScan(&dbTheme)
 	if err != nil {
 		return nil, err
 	}
-	theme.Id = id
-	return &theme, nil
+	return &dbTheme, nil
 }
 
 func (p *PostgresDB) GetAllUserThemes(userName *string) ([]*model.Theme, error) {
@@ -122,14 +120,13 @@ func (p *PostgresDB) DeleteTheme(themeId int) error {
 // ---------------------------------------------------------------------------------------------------------------------
 
 func (p *PostgresDB) SaveUser(user model.User) (*model.User, error) {
-	row := p.db.QueryRow(`SELECT * FROM create_user($1, $2)`, user.Name, user.TelegramId)
-	var id int
-	err := row.Scan(&id)
+	row := p.db.QueryRowx(`SELECT * FROM create_user($1, $2)`, user.Name, user.TelegramId)
+	var dbUser model.User
+	err := row.StructScan(&dbUser)
 	if err != nil {
 		return nil, err
 	}
-	user.Id = id
-	return &user, nil
+	return &dbUser, nil
 }
 
 func (p *PostgresDB) GetUserByTgId(telegramId int64) (*model.User, error) {
@@ -164,4 +161,20 @@ func (p *PostgresDB) ChangeUser(user *model.User) (*model.User, error) {
 func (p *PostgresDB) DeleteUser(userId int) error {
 	_, err := p.db.Exec(`SELECT * FROM delete_user($1)`, userId)
 	return err
+}
+
+func (p *PostgresDB) GetAllUsers() ([]*model.User, error) {
+	rows, err := p.db.Queryx(`SELECT * FROM get_users()`)
+	if err != nil {
+		return nil, err
+	}
+	users := make([]*model.User, 0)
+	for rows.Next() {
+		var u model.User
+		if err = rows.StructScan(&u); err != nil {
+			return nil, err
+		}
+		users = append(users, &u)
+	}
+	return users, nil
 }
