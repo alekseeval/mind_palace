@@ -29,7 +29,7 @@ CREATE TABLE if not exists mind_palace.note_types (
 
 CREATE TABLE if not exists mind_palace.notes (
     id serial PRIMARY KEY,
-    title VARCHAR NOT NULL UNIQUE ,
+    title VARCHAR NOT NULL,
     text VARCHAR NOT NULL,
     note_type int NOT NULL,
     theme_id int NOT NULL,
