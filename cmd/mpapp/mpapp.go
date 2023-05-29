@@ -20,35 +20,36 @@ var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/c
 
 func main() {
 	// setup logger
-	log.SetFormatter(&log.JSONFormatter{})
-	log.SetLevel(log.InfoLevel) // default log level
+	logger := log.New()
+	logger.SetFormatter(&log.JSONFormatter{})
+	logger.SetLevel(log.InfoLevel) // default log level
 
 	// read config file and setup logger level
 	config, err := configuration.ReadConfig(PathToConfig)
 	if err != nil {
-		log.WithField("reason", err).Fatal("error occurred when read config file")
+		logger.WithField("reason", err).Fatal("error occurred when read config file")
 	}
 	lvl, err := log.ParseLevel(config.Logger.Level)
 	if err != nil {
 		lvl = log.InfoLevel
-		log.WithField("reason", err).Error("failed to parse log level")
+		logger.WithField("reason", err).Error("failed to parse log level")
 	}
-	log.SetLevel(lvl)
-	log.WithField("value", config).Debug("config successfully parsed")
-	log.Debugf("set log level to %s", lvl)
+	logger.SetLevel(lvl)
+	logger.WithField("value", config).Debug("config successfully parsed")
+	logger.Debugf("set log level to %s", lvl)
 
 	// setup DB
 	var dbDAO model.IDAO
 	dbDAO, err = dal.NewPostgresDB(config)
 	if err != nil {
-		log.WithField("reason", err).Fatal("failed to create connection to DB")
+		logger.WithField("reason", err).Fatal("failed to create connection to DB")
 	}
-	log.Info("successfully connected to DB")
+	logger.Info("successfully connected to DB")
 
 	// setup services
 	ctx, ctxDone := context.WithCancel(context.Background())
 	eg, egContext := errgroup.WithContext(ctx)
-	httpSerer := http.NewHttpServer(config, dbDAO)
+	httpSerer := http.NewHttpServer(config, dbDAO, log.NewEntry(logger))
 
 	eg.Go(func() error {
 		err = httpSerer.ListenAndServe()
@@ -70,15 +71,15 @@ func main() {
 		defer ctxWithTimeoutCancel()
 		err = httpSerer.ShoutDown(ctxWithTimeout)
 		if err != nil {
-			log.WithField("reason", err).Fatal("error handled when shutdown HTTP server")
+			logger.WithField("reason", err).Fatal("error handled when shutdown HTTP server")
 		}
 		return nil
 	})
 
 	err = eg.Wait()
 	if err != nil {
-		log.Infof("received error: %v", err)
+		logger.Infof("received error: %v", err)
 	} else {
-		log.Info("finished clean")
+		logger.Info("finished clean")
 	}
 }
