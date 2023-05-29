@@ -5,22 +5,26 @@ import (
 	"MindPalace/internal/mindPalace/model"
 	"fmt"
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"net/http"
 	"time"
 )
 
 type HttpServer struct {
-	storage model.IDAO
-	echo    *echo.Echo
+	storage  model.IDAO
+	echo     *echo.Echo
+	logEntry *log.Entry
 
 	httpConfig *configuration.HttpConfig
 }
 
-func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer {
+func NewHttpServer(config *configuration.Config, storage model.IDAO, logEntry *log.Entry) *HttpServer {
+	logEntry = logEntry.WithField("app", "HTTPServer")
 	httpServer := &HttpServer{
 		storage:    storage,
 		httpConfig: &config.System.Http,
+		logEntry:   logEntry,
 	}
 
 	// setup echo
@@ -29,8 +33,8 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	e.Debug = false
 	e.Server.ReadTimeout = time.Duration(httpServer.httpConfig.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(httpServer.httpConfig.WriteTimeout) * time.Second
-	e.HTTPErrorHandler = customHTTPErrorHandler
-	e.Use(logMiddleware)
+	e.HTTPErrorHandler = httpServer.customHTTPErrorHandler
+	e.Use(httpServer.logMiddleware)
 	httpServer.echo = e
 
 	apiV1 := e.Group("/api/v1")
