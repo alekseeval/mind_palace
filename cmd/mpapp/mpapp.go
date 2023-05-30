@@ -33,13 +33,13 @@ func main() {
 	if err != nil {
 		logger.WithField("reason", err).Fatal("error occurred when read config file")
 	}
+	logger.WithField("value", config).Info("config successfully parsed")
 	lvl, err := log.ParseLevel(config.Logger.Level)
 	if err != nil {
 		lvl = DefaultLogLevel
 		logger.WithField("reason", err).Error("failed to parse log level, will be used " + DefaultLogLevel.String() + " as default")
 	}
 	logger.SetLevel(lvl)
-	logger.WithField("value", config).Info("config successfully parsed")
 	logger.Debugf("set log level to %s", lvl)
 
 	// setup DB
