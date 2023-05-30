@@ -15,6 +15,10 @@ import (
 	"syscall"
 )
 
+const (
+	DefaultLogLevel = log.InfoLevel
+)
+
 // TODO: изменить путь на /etc/..
 var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
 
@@ -22,7 +26,7 @@ func main() {
 	// setup logger
 	logger := log.New()
 	logger.SetFormatter(&log.JSONFormatter{})
-	logger.SetLevel(log.InfoLevel) // default log level
+	logger.SetLevel(DefaultLogLevel) // default log level
 
 	// read config file and setup logger level
 	config, err := configuration.ReadConfig(PathToConfig)
@@ -31,11 +35,11 @@ func main() {
 	}
 	lvl, err := log.ParseLevel(config.Logger.Level)
 	if err != nil {
-		lvl = log.InfoLevel
-		logger.WithField("reason", err).Error("failed to parse log level")
+		lvl = DefaultLogLevel
+		logger.WithField("reason", err).Error("failed to parse log level, will be used " + DefaultLogLevel.String() + " as default")
 	}
 	logger.SetLevel(lvl)
-	logger.WithField("value", config).Debug("config successfully parsed")
+	logger.WithField("value", config).Info("config successfully parsed")
 	logger.Debugf("set log level to %s", lvl)
 
 	// setup DB
@@ -49,7 +53,7 @@ func main() {
 	// setup services
 	ctx, ctxDone := context.WithCancel(context.Background())
 	eg, egContext := errgroup.WithContext(ctx)
-	httpSerer := http.NewHttpServer(config, dbDAO, log.NewEntry(logger))
+	httpSerer := http.NewHttpServer(config, dbDAO, log.NewEntry(logger).WithField("module", "http_server"))
 
 	eg.Go(func() error {
 		err = httpSerer.ListenAndServe()
