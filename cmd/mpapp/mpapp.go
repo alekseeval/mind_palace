@@ -37,7 +37,7 @@ func main() {
 	lvl, err := log.ParseLevel(config.Logger.Level)
 	if err != nil {
 		lvl = DefaultLogLevel
-		logger.WithField("reason", err).Error("failed to parse log level, will be used " + DefaultLogLevel.String() + " as default")
+		logger.WithField("reason", err).Warning("failed to parse log level, will be used " + DefaultLogLevel.String() + " as default")
 	}
 	logger.SetLevel(lvl)
 	logger.Debugf("set log level to %s", lvl)

@@ -2,20 +2,41 @@ package http
 
 import (
 	"MindPalace/internal/mindPalace/model"
+	"bytes"
+	"encoding/json"
 	"github.com/labstack/echo/v4"
 	"github.com/lib/pq"
+	log "github.com/sirupsen/logrus"
+	"io"
+	"io/ioutil"
 	"net/http"
 )
 
 func (s *HttpServer) logMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return next(c)
+	return func(ctx echo.Context) error {
+		// Read the content
+		var bodyBytes []byte
+		var parsedBody interface{}
+		if ctx.Request().Body != nil {
+			bodyBytes, _ = io.ReadAll(ctx.Request().Body)
+			err := json.Unmarshal(bodyBytes, &parsedBody)
+			if err != nil {
+				parsedBody = nil
+			}
+		}
+		// Restore the io.ReadCloser to its original state
+		ctx.Request().Body = ioutil.NopCloser(bytes.NewBuffer(bodyBytes))
+		s.logEntry.WithFields(log.Fields{
+			"headers": ctx.Request().Header,
+			"body":    parsedBody,
+			"uri":     ctx.Request().URL.Path,
+		}).Info("Request handled")
+		return next(ctx)
 	}
 }
 
 func (s *HttpServer) customHTTPErrorHandler(returnedErr error, c echo.Context) {
 	if c.Response().Committed {
-		s.logEntry.Error("Response was already committed when starting to handle error")
 		return
 	}
 

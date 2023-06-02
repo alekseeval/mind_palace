@@ -20,7 +20,6 @@ type HttpServer struct {
 }
 
 func NewHttpServer(config *configuration.Config, storage model.IDAO, logEntry *log.Entry) *HttpServer {
-	logEntry = logEntry.WithField("app", "HTTPServer")
 	httpServer := &HttpServer{
 		storage:    storage,
 		httpConfig: &config.System.Http,
