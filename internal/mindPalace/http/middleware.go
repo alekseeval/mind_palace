@@ -36,6 +36,7 @@ func (s *HttpServer) requestLogMiddleware(next echo.HandlerFunc) echo.HandlerFun
 }
 
 func (s *HttpServer) customHTTPErrorHandler(returnedErr error, c echo.Context) {
+	s.logEntry.Error(returnedErr)
 	if c.Response().Committed {
 		return
 	}
@@ -45,7 +46,7 @@ func (s *HttpServer) customHTTPErrorHandler(returnedErr error, c echo.Context) {
 		serverErr := MapDBError(dbErr)
 		err := c.JSON(http.StatusInternalServerError, serverErr)
 		if err != nil {
-			s.logEntry.Error("Error occurred when return HTTP error")
+			s.logEntry.Error("Error occurred when returning HTTP error")
 		}
 		return
 	}
