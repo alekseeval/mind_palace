@@ -3,7 +3,6 @@ package http
 import (
 	"MindPalace/internal/mindPalace/model"
 	"github.com/lib/pq"
-	log "github.com/sirupsen/logrus"
 )
 
 func MapDBError(dbErr *pq.Error) *model.ServerError {
@@ -59,7 +58,6 @@ func MapDBError(dbErr *pq.Error) *model.ServerError {
 
 	if serverError == nil { // Unexpected DB error
 		serverError = model.NewServerError(model.DbError, dbErr)
-		log.Debug(*dbErr)
 	}
 	return serverError
 }
