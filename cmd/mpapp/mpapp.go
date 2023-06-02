@@ -5,7 +5,7 @@ import (
 	"MindPalace/internal/mindPalace/dal"
 	"MindPalace/internal/mindPalace/http"
 	"MindPalace/internal/mindPalace/model"
-	log "github.com/sirupsen/logrus"
+	logrus "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"time"
 
@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	DefaultLogLevel = log.InfoLevel
+	DefaultLogLevel = logrus.InfoLevel
 )
 
 // TODO: изменить путь на /etc/..
@@ -24,8 +24,8 @@ var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/c
 
 func main() {
 	// setup logger
-	logger := log.New()
-	logger.SetFormatter(&log.JSONFormatter{})
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
 	logger.SetLevel(DefaultLogLevel) // default log level
 
 	// read config file and setup logger level
@@ -34,7 +34,7 @@ func main() {
 		logger.WithField("reason", err).Fatal("error occurred when read config file")
 	}
 	logger.WithField("value", config).Info("config successfully parsed")
-	lvl, err := log.ParseLevel(config.Logger.Level)
+	lvl, err := logrus.ParseLevel(config.Logger.Level)
 	if err != nil {
 		lvl = DefaultLogLevel
 		logger.WithField("reason", err).Warning("failed to parse log level, will be used " + DefaultLogLevel.String() + " as default")
@@ -44,7 +44,7 @@ func main() {
 
 	// setup DB
 	var dbDAO model.IDAO
-	dbDAO, err = dal.NewPostgresDB(config)
+	dbDAO, err = dal.NewPostgresDB(config, logrus.NewEntry(logger).WithField("module", "db"))
 	if err != nil {
 		logger.WithField("reason", err).Fatal("failed to create connection to DB")
 	}
@@ -53,7 +53,7 @@ func main() {
 	// setup services
 	ctx, ctxDone := context.WithCancel(context.Background())
 	eg, egContext := errgroup.WithContext(ctx)
-	httpSerer := http.NewHttpServer(config, dbDAO, log.NewEntry(logger).WithField("module", "http_server"))
+	httpSerer := http.NewHttpServer(config, dbDAO, logrus.NewEntry(logger).WithField("module", "http_server"))
 
 	eg.Go(func() error {
 		err = httpSerer.ListenAndServe()
