@@ -33,7 +33,7 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO, logEntry *l
 	e.Server.ReadTimeout = time.Duration(httpServer.httpConfig.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(httpServer.httpConfig.WriteTimeout) * time.Second
 	e.HTTPErrorHandler = httpServer.customHTTPErrorHandler
-	e.Use(httpServer.logMiddleware)
+	e.Use(httpServer.requestLogMiddleware)
 	httpServer.echo = e
 
 	apiV1 := e.Group("/api/v1")

@@ -12,7 +12,7 @@ import (
 	"net/http"
 )
 
-func (s *HttpServer) logMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
+func (s *HttpServer) requestLogMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(ctx echo.Context) error {
 		// Read the content
 		var bodyBytes []byte
