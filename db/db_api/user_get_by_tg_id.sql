@@ -10,7 +10,7 @@ BEGIN
     SELECT * INTO r_user FROM mind_palace.users WHERE tg_id=p_tg_id;
     GET DIAGNOSTICS v_cnt := ROW_COUNT;
     IF v_cnt = 0 THEN
-        RAISE EXCEPTION 'There is no user with tg id=%', p_tg_id;
+        RAISE SQLSTATE '80002' USING message = 'no such user';
     END IF;
     RETURN r_user;
 END;

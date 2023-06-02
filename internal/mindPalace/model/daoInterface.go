@@ -12,6 +12,7 @@ type IUserDAO interface {
 	GetUserById(userId int) (*User, error)
 	ChangeUser(user *User) (*User, error)
 	DeleteUser(userId int) error
+	GetAllUsers() ([]*User, error)
 }
 
 type IThemeDAO interface {

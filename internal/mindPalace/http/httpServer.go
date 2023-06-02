@@ -5,22 +5,25 @@ import (
 	"MindPalace/internal/mindPalace/model"
 	"fmt"
 	"github.com/labstack/echo/v4"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/context"
 	"net/http"
 	"time"
 )
 
 type HttpServer struct {
-	storage model.IDAO
-	echo    *echo.Echo
+	storage  model.IDAO
+	echo     *echo.Echo
+	logEntry *log.Entry
 
 	httpConfig *configuration.HttpConfig
 }
 
-func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer {
+func NewHttpServer(config *configuration.Config, storage model.IDAO, logEntry *log.Entry) *HttpServer {
 	httpServer := &HttpServer{
 		storage:    storage,
 		httpConfig: &config.System.Http,
+		logEntry:   logEntry,
 	}
 
 	// setup echo
@@ -29,8 +32,8 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	e.Debug = false
 	e.Server.ReadTimeout = time.Duration(httpServer.httpConfig.ReadTimeout) * time.Second
 	e.Server.WriteTimeout = time.Duration(httpServer.httpConfig.WriteTimeout) * time.Second
-	e.HTTPErrorHandler = customHTTPErrorHandler
-	e.Use(logMiddleware)
+	e.HTTPErrorHandler = httpServer.customHTTPErrorHandler
+	e.Use(httpServer.requestLogMiddleware)
 	httpServer.echo = e
 
 	apiV1 := e.Group("/api/v1")
@@ -41,6 +44,7 @@ func NewHttpServer(config *configuration.Config, storage model.IDAO) *HttpServer
 	apiV1.DELETE("/users/:id", httpServer.deleteUser)
 	apiV1.PATCH("/users/:id", httpServer.editUser)
 	apiV1.POST("/users", httpServer.createUser)
+	apiV1.GET("/users", httpServer.getAllUsers)
 
 	apiV1.POST("/themes", httpServer.createTheme)
 	apiV1.GET("/themes", httpServer.getUserThemes)

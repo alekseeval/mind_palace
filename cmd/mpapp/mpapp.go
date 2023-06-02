@@ -5,7 +5,7 @@ import (
 	"MindPalace/internal/mindPalace/dal"
 	"MindPalace/internal/mindPalace/http"
 	"MindPalace/internal/mindPalace/model"
-	log "github.com/sirupsen/logrus"
+	logrus "github.com/sirupsen/logrus"
 	"golang.org/x/sync/errgroup"
 	"time"
 
@@ -15,40 +15,45 @@ import (
 	"syscall"
 )
 
+const (
+	DefaultLogLevel = logrus.InfoLevel
+)
+
 // TODO: изменить путь на /etc/..
 var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
 
 func main() {
 	// setup logger
-	log.SetFormatter(&log.JSONFormatter{})
-	log.SetLevel(log.InfoLevel) // default log level
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
+	logger.SetLevel(DefaultLogLevel) // default log level
 
 	// read config file and setup logger level
 	config, err := configuration.ReadConfig(PathToConfig)
 	if err != nil {
-		log.WithField("reason", err).Fatal("error occurred when read config file")
+		logger.WithField("reason", err).Fatal("error occurred when read config file")
 	}
-	lvl, err := log.ParseLevel(config.Logger.Level)
+	logger.WithField("value", config).Info("config successfully parsed")
+	lvl, err := logrus.ParseLevel(config.Logger.Level)
 	if err != nil {
-		lvl = log.InfoLevel
-		log.WithField("reason", err).Error("failed to parse log level")
+		lvl = DefaultLogLevel
+		logger.WithField("reason", err).Warning("failed to parse log level, will be used " + DefaultLogLevel.String() + " as default")
 	}
-	log.SetLevel(lvl)
-	log.WithField("value", config).Debug("config successfully parsed")
-	log.Debugf("set log level to %s", lvl)
+	logger.SetLevel(lvl)
+	logger.Debugf("set log level to %s", lvl)
 
 	// setup DB
 	var dbDAO model.IDAO
-	dbDAO, err = dal.NewPostgresDB(config)
+	dbDAO, err = dal.NewPostgresDB(config, logrus.NewEntry(logger).WithField("module", "db"))
 	if err != nil {
-		log.WithField("reason", err).Fatal("failed to create connection to DB")
+		logger.WithField("reason", err).Fatal("failed to create connection to DB")
 	}
-	log.Info("successfully connected to DB")
+	logger.Info("successfully connected to DB")
 
 	// setup services
 	ctx, ctxDone := context.WithCancel(context.Background())
 	eg, egContext := errgroup.WithContext(ctx)
-	httpSerer := http.NewHttpServer(config, dbDAO)
+	httpSerer := http.NewHttpServer(config, dbDAO, logrus.NewEntry(logger).WithField("module", "http_server"))
 
 	eg.Go(func() error {
 		err = httpSerer.ListenAndServe()
@@ -70,15 +75,15 @@ func main() {
 		defer ctxWithTimeoutCancel()
 		err = httpSerer.ShoutDown(ctxWithTimeout)
 		if err != nil {
-			log.WithField("reason", err).Fatal("error handled when shutdown HTTP server")
+			logger.WithField("reason", err).Fatal("error handled when shutdown HTTP server")
 		}
 		return nil
 	})
 
 	err = eg.Wait()
 	if err != nil {
-		log.Infof("received error: %v", err)
+		logger.Infof("received error: %v", err)
 	} else {
-		log.Info("finished clean")
+		logger.Info("finished clean")
 	}
 }
