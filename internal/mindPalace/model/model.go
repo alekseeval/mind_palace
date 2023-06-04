@@ -31,12 +31,12 @@ type Note struct {
 	ThemeId    *int      `db:"theme_id" json:"theme_id"`
 }
 
-type UserUpdate struct {
+type UserAttributes struct {
 	Name       *string `json:"name"`
 	TelegramId *int64  `json:"tg_id"`
 }
 
-func (u *UserUpdate) UpdateUser(user *User) *User {
+func (u *UserAttributes) UpdateUser(user *User) *User {
 	user.Name = u.Name
 	if u.TelegramId != nil {
 		user.TelegramId = u.TelegramId
@@ -44,12 +44,12 @@ func (u *UserUpdate) UpdateUser(user *User) *User {
 	return user
 }
 
-type ThemeUpdate struct {
+type ThemeAttributes struct {
 	Title       *string `json:"title"`
 	MainThemeId *int    `json:"main_theme_id"`
 }
 
-func (tu *ThemeUpdate) UpdateTheme(theme *Theme) *Theme {
+func (tu *ThemeAttributes) UpdateTheme(theme *Theme) *Theme {
 	if tu.Title != nil {
 		theme.Title = tu.Title
 	}

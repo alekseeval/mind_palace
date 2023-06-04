@@ -12,7 +12,7 @@ import (
 // ---------------------------------------------------------------------------------------------------------------------
 // e.POST("/users")
 func (s *HttpServer) createUser(c echo.Context) error {
-	userData := new(model.UserUpdate)
+	userData := new(model.UserAttributes)
 	err := c.Bind(&userData)
 	if err != nil {
 		return model.NewServerError(model.WrongRequestParameters, err)
@@ -67,7 +67,7 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 // PATCH("/users/:id")
 func (s *HttpServer) editUser(c echo.Context) error {
 	// read request parameters
-	updatedUserParams := new(model.UserUpdate)
+	updatedUserParams := new(model.UserAttributes)
 	err := c.Bind(&updatedUserParams)
 	if err != nil {
 		return err
@@ -103,7 +103,7 @@ func (s *HttpServer) getAllUsers(c echo.Context) error {
 // ---------------------------------------------------------------------------------------------------------------------
 // POST("/themes")
 func (s *HttpServer) createTheme(c echo.Context) error {
-	themeData := new(model.ThemeUpdate)
+	themeData := new(model.ThemeAttributes)
 	err := c.Bind(&themeData)
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
@@ -156,7 +156,7 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
 	}
-	themeData := new(model.ThemeUpdate)
+	themeData := new(model.ThemeAttributes)
 	err = c.Bind(&themeData)
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
