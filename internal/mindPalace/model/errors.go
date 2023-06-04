@@ -36,6 +36,8 @@ const (
 
 var ErrDescriptionMap = map[int]string{
 	WrongRequestParameters: "Wrong request parameters",
+	InternalServerError:    "Internal server error",
+	DbError:                "DB error",
 
 	// Users
 	UserNameUsed:        "User with this name already exists",
@@ -59,9 +61,6 @@ var ErrDescriptionMap = map[int]string{
 	NoteNoTextProvided:  "Note must have the Text",
 	NoSuchNote:          "No such note",
 	InvalidNoteType:     "Invalid note type provided",
-
-	InternalServerError: "Internal server error",
-	DbError:             "DB error",
 }
 
 type ServerError struct {
