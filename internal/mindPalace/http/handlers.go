@@ -17,7 +17,7 @@ func (s *HttpServer) createUser(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.WrongRequestParameters, err)
 	}
-	user := userData.UpdateUser(&model.User{})
+	user := userData.NewUserWithAttr()
 	dbUser, err := s.storage.SaveUser(*user)
 	if err != nil {
 		return err
@@ -67,8 +67,8 @@ func (s *HttpServer) deleteUser(c echo.Context) error {
 // PATCH("/users/:id")
 func (s *HttpServer) editUser(c echo.Context) error {
 	// read request parameters
-	updatedUserParams := new(model.UserAttributes)
-	err := c.Bind(&updatedUserParams)
+	userData := new(model.UserAttributes)
+	err := c.Bind(&userData)
 	if err != nil {
 		return err
 	}
@@ -78,11 +78,8 @@ func (s *HttpServer) editUser(c echo.Context) error {
 	}
 
 	// update user in db
-	user, err := s.storage.GetUserById(userId)
-	if err != nil {
-		return err
-	}
-	user = updatedUserParams.UpdateUser(user)
+	user := userData.NewUserWithAttr()
+	user.Id = userId
 	dbUser, err := s.storage.ChangeUser(user)
 	if err != nil {
 		return err
@@ -109,13 +106,12 @@ func (s *HttpServer) createTheme(c echo.Context) error {
 		return model.NewServerError(model.InternalServerError, err)
 	}
 	userIdHeader := c.Request().Header["Metadata-User"]
-	var userName string
+	var userName *string
 	if len(userIdHeader) != 0 {
-		userName = userIdHeader[0]
-	} else {
-		userName = model.SystemUser
+		userName = &userIdHeader[0]
 	}
-	theme := themeData.UpdateTheme(&model.Theme{UserName: &userName})
+	theme := themeData.NewThemeWithAttributes()
+	theme.UserName = userName
 	theme, err = s.storage.SaveTheme(*theme)
 	if err != nil {
 		return err
@@ -161,7 +157,8 @@ func (s *HttpServer) editTheme(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
 	}
-	theme := themeData.UpdateTheme(&model.Theme{Id: themeId})
+	theme := themeData.NewThemeWithAttributes()
+	theme.Id = themeId
 	theme, err = s.storage.ChangeTheme(theme)
 	if err != nil {
 		return err
@@ -184,9 +181,8 @@ func (s *HttpServer) createNote(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
 	}
-	note := new(model.Note)
+	note := noteData.NewNoteWithAttributes()
 	note.ThemeId = &themeId
-	note = noteData.UpdateNote(note)
 	note, err = s.storage.SaveNote(*note)
 	if err != nil {
 		return err
@@ -232,9 +228,8 @@ func (s *HttpServer) editNote(c echo.Context) error {
 	if err != nil {
 		return model.NewServerError(model.InternalServerError, err)
 	}
-	note := new(model.Note)
+	note := noteData.NewNoteWithAttributes()
 	note.Id = noteId
-	note = noteData.UpdateNote(note)
 	note, err = s.storage.ChangeNote(note)
 	if err != nil {
 		return err
