@@ -31,32 +31,30 @@ type Note struct {
 	ThemeId    *int      `db:"theme_id" json:"theme_id"`
 }
 
-type UserUpdate struct {
+type UserAttributes struct {
 	Name       *string `json:"name"`
 	TelegramId *int64  `json:"tg_id"`
 }
 
-func (u *UserUpdate) UpdateUser(user *User) *User {
-	user.Name = u.Name
-	if u.TelegramId != nil {
-		user.TelegramId = u.TelegramId
+func (ua *UserAttributes) NewUserWithAttr() *User {
+	user := User{
+		Name:       ua.Name,
+		TelegramId: ua.TelegramId,
 	}
-	return user
+	return &user
 }
 
-type ThemeUpdate struct {
+type ThemeAttributes struct {
 	Title       *string `json:"title"`
 	MainThemeId *int    `json:"main_theme_id"`
 }
 
-func (tu *ThemeUpdate) UpdateTheme(theme *Theme) *Theme {
-	if tu.Title != nil {
-		theme.Title = tu.Title
+func (ta *ThemeAttributes) NewThemeWithAttributes() *Theme {
+	theme := Theme{
+		Title:       ta.Title,
+		MainThemeId: ta.MainThemeId,
 	}
-	if tu.MainThemeId != nil {
-		theme.MainThemeId = tu.MainThemeId
-	}
-	return theme
+	return &theme
 }
 
 type NoteAttributes struct {
@@ -66,18 +64,12 @@ type NoteAttributes struct {
 	ThemeId    *int      `json:"theme_id"`
 }
 
-func (nu NoteAttributes) UpdateNote(note *Note) *Note {
-	if nu.Title != nil {
-		note.Title = nu.Title
+func (na *NoteAttributes) NewNoteWithAttributes() *Note {
+	note := Note{
+		Title:      na.Title,
+		Text:       na.Text,
+		NoteTypeId: na.NoteTypeId,
+		ThemeId:    na.ThemeId,
 	}
-	if nu.Text != nil {
-		note.Text = nu.Text
-	}
-	if nu.NoteTypeId != nil {
-		note.NoteTypeId = nu.NoteTypeId
-	}
-	if nu.ThemeId != nil {
-		note.ThemeId = nu.ThemeId
-	}
-	return note
+	return &note
 }

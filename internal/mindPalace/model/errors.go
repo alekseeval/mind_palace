@@ -1,5 +1,7 @@
 package model
 
+import "github.com/lib/pq"
+
 // Internal errors
 const (
 	InternalServerError = iota + 1000
@@ -32,8 +34,10 @@ const (
 	InvalidNoteType
 )
 
-var ErrMap = map[int]string{
+var ErrDescriptionMap = map[int]string{
 	WrongRequestParameters: "Wrong request parameters",
+	InternalServerError:    "Internal server error",
+	DbError:                "DB error",
 
 	// Users
 	UserNameUsed:        "User with this name already exists",
@@ -57,9 +61,6 @@ var ErrMap = map[int]string{
 	NoteNoTextProvided:  "Note must have the Text",
 	NoSuchNote:          "No such note",
 	InvalidNoteType:     "Invalid note type provided",
-
-	InternalServerError: "Internal server error",
-	DbError:             "DB error",
 }
 
 type ServerError struct {
@@ -71,7 +72,7 @@ type ServerError struct {
 func NewServerError(code int, err error) *ServerError {
 	he := &ServerError{
 		Code:    code,
-		Message: ErrMap[code],
+		Message: ErrDescriptionMap[code],
 	}
 	if err != nil {
 		he.Detail = err.Error()
@@ -81,4 +82,61 @@ func NewServerError(code int, err error) *ServerError {
 
 func (e *ServerError) Error() string {
 	return e.Detail + ": " + e.Message
+}
+
+func MapDBError(dbErr *pq.Error) *ServerError {
+	var serverError *ServerError
+	if dbErr.Code == "23505" { // unique constrain DB error
+		switch dbErr.Constraint {
+		case "users_name_key":
+			serverError = NewServerError(UserNameUsed, dbErr)
+		case "users_tg_id_key":
+			serverError = NewServerError(UserTgIdUsed, dbErr)
+		case "themes_title_user_id_key":
+			serverError = NewServerError(ThemeExists, dbErr)
+		}
+	}
+
+	if dbErr.Code == "23503" { // foreign key violation
+		switch dbErr.Constraint {
+		case "themes_user_id_fkey":
+			serverError = NewServerError(UserThemeLinkExists, dbErr)
+		case "themes_main_theme_id_fkey":
+			serverError = NewServerError(NoSuchMainTheme, dbErr)
+		case "notes_theme_id_fkey":
+			serverError = NewServerError(NoteThemeLinkExists, dbErr)
+		}
+	}
+
+	switch dbErr.Code { // Own codes
+	case "80001":
+		serverError = NewServerError(UserNameTooLong, dbErr)
+	case "80002":
+		serverError = NewServerError(NoSuchUser, dbErr)
+	case "80003":
+		serverError = NewServerError(MainThemeUserMismatch, dbErr)
+	case "80004":
+		serverError = NewServerError(NoSuchMainTheme, dbErr)
+	case "80005":
+		serverError = NewServerError(ThemeMainItself, dbErr)
+	case "80006":
+		serverError = NewServerError(ThemeHaveSubThemes, dbErr)
+	case "80007":
+		serverError = NewServerError(NoSuchTheme, dbErr)
+	case "80008":
+		serverError = NewServerError(NoteNoThemeProvided, dbErr)
+	case "80009":
+		serverError = NewServerError(NoteNoTitleProvided, dbErr)
+	case "80011":
+		serverError = NewServerError(InvalidNoteType, dbErr)
+	case "80012":
+		serverError = NewServerError(NoteNoTextProvided, dbErr)
+	case "80013":
+		serverError = NewServerError(NoSuchNote, dbErr)
+	}
+
+	if serverError == nil { // Unexpected DB error
+		serverError = NewServerError(DbError, dbErr)
+	}
+	return serverError
 }

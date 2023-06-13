@@ -19,8 +19,7 @@ const (
 	DefaultLogLevel = logrus.InfoLevel
 )
 
-// TODO: изменить путь на /etc/..
-var PathToConfig = "/home/reserv/GolandProjects/MindPalace/internal/mindPalace/config.yaml"
+var PathToConfig = "/etc/mp_app/config.yaml"
 
 func main() {
 	// setup logger

@@ -43,7 +43,7 @@ func (s *HttpServer) customHTTPErrorHandler(returnedErr error, c echo.Context) {
 
 	// Catch db errors
 	if dbErr, ok := returnedErr.(*pq.Error); ok {
-		serverErr := MapDBError(dbErr)
+		serverErr := model.MapDBError(dbErr)
 		err := c.JSON(http.StatusInternalServerError, serverErr)
 		if err != nil {
 			s.logEntry.Error("Error occurred when returning HTTP error")
