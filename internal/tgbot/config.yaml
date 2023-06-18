@@ -1,0 +1,8 @@
+system:
+  telegram:
+    access_token: '0000000000:abcabcabcabcabcabcabcabcabcabcabcabc'
+  mp_app:
+    host: 192.168.0.108
+    port: 8080
+logger:
+  level: trace
