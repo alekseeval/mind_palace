@@ -36,7 +36,6 @@ type HttpConfig struct {
 func ReadConfig(path string) (config *Config, err error) {
 	viper.SetConfigFile(path)
 	viper.AutomaticEnv()
-	viper.SetEnvPrefix("mp")
 	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
 
 	err = viper.ReadInConfig()
