@@ -2,7 +2,7 @@
 
 ### Основные компоненты системы:
 
-- Server
+- CRUD HTTP-Server
 - Telegram bot (TODO)
 - БД в PostgreSQL
 
