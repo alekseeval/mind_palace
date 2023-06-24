@@ -5,7 +5,6 @@ import (
 	"MindPalace/internal/tgbot/configuration"
 	"context"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/sync/errgroup"
 	"os"
 	"os/signal"
 	"syscall"
@@ -34,46 +33,22 @@ func main() {
 		logger.Info("Log level set to ", logLevel)
 	}
 	bot := tgbot.NewTelegramBot(config, logger.WithField("app", "Telegram Bot"))
-	ctx, ctxDoneFunc := context.WithCancel(context.Background())
-	eg, egCtx := errgroup.WithContext(ctx)
 
-	eg.Go(func() error {
+	go func() {
 		err = bot.Run()
 		if err != nil {
-			logger.Error("Failed to start Telegram Bot")
-			return err
+			logger.Fatal("Failed to start Telegram Bot")
 		}
-		return nil
-	})
+	}()
 
-	eg.Go(func() error {
-		exitChl := make(chan os.Signal, 1)
-		signal.Notify(exitChl, syscall.SIGINT, syscall.SIGTERM)
-		select {
-		case <-exitChl:
-			// case when captured os signal
-			ctxDoneFunc()
-		case <-egCtx.Done():
-			// case when captured error in errgroup
-			err = egCtx.Err()
-			if err != nil {
-				return err
-			}
-			return nil
-		}
-		ctxWithTimeOut, cf := context.WithTimeout(context.Background(), 2*time.Second)
-		defer cf()
-		err = bot.Shutdown(ctxWithTimeOut)
-		if err != nil {
-			logger.WithField("error", err).Fatal("Failed to stop bot")
-		}
-		return nil
-	})
-
-	err = eg.Wait()
+	exitChl := make(chan os.Signal, 1)
+	signal.Notify(exitChl, syscall.SIGINT, syscall.SIGTERM)
+	<-exitChl // Wait os signal
+	ctxWithTimeOut, cf := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cf()
+	err = bot.Shutdown(ctxWithTimeOut)
 	if err != nil {
-		logger.WithField("err", err).Error("Error occurred")
+		logger.WithField("error", err).Fatal("Failed to stop bot")
 	}
-
-	logger.Info("Shutdown the app")
+	logger.Info("App was gracefully shutdown")
 }
