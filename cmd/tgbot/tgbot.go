@@ -1,9 +1,14 @@
 package main
 
 import (
+	"MindPalace/internal/tgbot"
 	"MindPalace/internal/tgbot/configuration"
-	"fmt"
+	"context"
 	"github.com/sirupsen/logrus"
+	"golang.org/x/sync/errgroup"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 const (
@@ -27,5 +32,41 @@ func main() {
 		logger.SetLevel(logLevel)
 		logger.Info("Log level set to ", logLevel)
 	}
-	fmt.Println("Hello world!")
+	bot := tgbot.NewTelegramBot(config, logger.WithField("app", "Telegram Bot"))
+	ctx, ctxDoneFunc := context.WithCancel(context.Background())
+	eg, egCtx := errgroup.WithContext(ctx)
+
+	eg.Go(func() error {
+		err = bot.Run()
+		if err != nil {
+			logger.Error("Failed to start Telegram Bot")
+			return err
+		}
+		return nil
+	})
+
+	eg.Go(func() error {
+		exitChl := make(chan os.Signal, 1)
+		signal.Notify(exitChl, syscall.SIGINT, syscall.SIGTERM)
+		select {
+		case <-exitChl:
+			// case when captured os signal
+			ctxDoneFunc()
+		case <-egCtx.Done():
+			// case when captured error in errgroup
+			err = egCtx.Err()
+			if err != nil {
+				return err
+			}
+			return nil
+		}
+		bot.Shutdown()
+		return nil
+	})
+	err = eg.Wait()
+	if err != nil {
+		logger.WithField("err", err).Error("Error occurred")
+	}
+
+	logger.Info("Shutdown the app")
 }
