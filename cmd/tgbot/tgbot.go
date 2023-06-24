@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 )
 
 const (
@@ -60,9 +61,15 @@ func main() {
 			}
 			return nil
 		}
-		bot.Shutdown()
+		ctxWithTimeOut, cf := context.WithTimeout(context.Background(), 2*time.Second)
+		defer cf()
+		err = bot.Shutdown(ctxWithTimeOut)
+		if err != nil {
+			logger.WithField("error", err).Fatal("Failed to stop bot")
+		}
 		return nil
 	})
+
 	err = eg.Wait()
 	if err != nil {
 		logger.WithField("err", err).Error("Error occurred")
