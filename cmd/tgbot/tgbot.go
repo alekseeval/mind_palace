@@ -14,6 +14,7 @@ import (
 const (
 	PathToConfig    = "/home/reserv/GolandProjects/MindPalace/internal/tgbot/config.yaml"
 	DefaultLogLevel = logrus.InfoLevel
+	BotStopTimeout  = time.Duration(10 * time.Second)
 )
 
 func main() {
@@ -44,7 +45,7 @@ func main() {
 	exitChl := make(chan os.Signal, 1)
 	signal.Notify(exitChl, syscall.SIGINT, syscall.SIGTERM)
 	<-exitChl // Wait os signal
-	ctxWithTimeOut, cf := context.WithTimeout(context.Background(), 2*time.Second)
+	ctxWithTimeOut, cf := context.WithTimeout(context.Background(), BotStopTimeout)
 	defer cf()
 	err = bot.Shutdown(ctxWithTimeOut)
 	if err != nil {
